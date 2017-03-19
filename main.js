@@ -27,11 +27,17 @@ var gameState = function (game){
         var block = game.add.sprite(150,150, 'block');
 
         block.inputEnabled = true;
-
+        var text;
         //set up mouse controls
-        block.events.onInputUp.add (function (){
-            game.add.text (5,5,"clicked");
+        block.events.onInputDown.add (function (){
+            text = game.add.text (5,5,"clicked");
         })
+        block.events.onInputUp.add (function (){
+            text.destroy();
+        })
+
+
+
 
     }
 
