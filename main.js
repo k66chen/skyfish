@@ -15,7 +15,9 @@ var gameState = function (game){
 
     this.preload = function (){
         game.load.image('sky','assets/sky.png');
-        game.load.image('sky','assets/block.png');
+        game.load.image('block','assets/block.png');
+        game.load.image('ball','assets/sprites/balls.png');
+        game.load.image('dude','assets/dude.png');
     }
 
     this.create =  function () {
@@ -25,6 +27,9 @@ var gameState = function (game){
         game.add.sprite (0,0,'sky');
 
         var block = game.add.sprite(150,150, 'block');
+
+        var player = new unit(game); 
+        player.create('dude',50,50,3);
 
         block.inputEnabled = true;
         var text;
