@@ -9,18 +9,23 @@ window.onload = function (){
     game.state.add ("Game", gameState); 
 
     game.state.start("Game",true,false);
+
+     
 }
 
 var gameState = function (game){
 
     this.preload = function (){
-        game.load.image('sky','assets/sky.png');
+        game.load.image('sky','assets/grass.png');
         game.load.image('block','assets/block.png');
         game.load.image('ball','assets/sprites/balls.png');
         game.load.image('dude','assets/dude.png');
+        game.load.image('plat','assets/kan.png');
     }
 
     this.create =  function () {
+
+        //create our grid that spans the 500x800 (10cellsx14cells)
         game.physics.startSystem(Phaser.Physics.BOX2D);
         game.stage.backgroundColor = '#2d2d2d';
 
@@ -29,7 +34,7 @@ var gameState = function (game){
         var block = game.add.sprite(150,150, 'block');
 
         var player = new unit(game); 
-        player.create('dude',50,50,3);
+        player.create('plat',50,50,3,3,5);
 
         block.inputEnabled = true;
         var text;
