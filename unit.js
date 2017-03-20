@@ -14,6 +14,11 @@ var unit = function (game){
     this.infoswitch = false;
 
     this.movepanel = game.add.group();
+    var testtext = game.add.text(0,0);
+
+    this.getType = function (){
+        return "unit" + global;
+    }
     
     this.create = function (name,sprite, hp, sp, movement,x,y){
        this.name = name;
@@ -36,6 +41,9 @@ var unit = function (game){
 
     this.click = function (){
         if (!this.infoswitch){
+            this.x = this.spriteframe.x ;
+            this.y = this.spriteframe.y ;
+
             //this.infotext = game.add.text (this.x+50,this.y+10,this.name + " Hp: "+this.hp + " Mv: " + this.movement);
             //show movement panels
 
@@ -55,7 +63,7 @@ var unit = function (game){
             }
             this.movepanel.setAll ('inputEnabled',true);
             this.movepanel.setAll ('alpha',0.2);
-            this.movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move);
+            this.movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
         }else{
             //this.infotext.destroy();
             this.movepanel.destroy();
@@ -73,8 +81,40 @@ var unit = function (game){
     this.move = function (event){
         //move the player depending on which movepanel was picked (panel in mouse event)
         event.alpha = 0.5;
-        //this.spriteframe.body.velocity.x= 50;
+        //game.add.text (0,0,"x:"+event.x+"y:"+event.y);
+        //   this.spriteframe.body.velocity.x= 150;
         this.infoswitch = false;
+        //determine destination x and destination y
+        var destx = event.x /50;
+        var desty = event.y / 50;
+        //var testtext = game.add.text (0,0,"x:"+this.spriteframe.x+"dx:"+destx);
+        
+        //game.physics.arcade.moveToXY (this.spriteframe,event.x,this.spriteframe.y,50,500); 
+        this.spriteframe.body.moves = false;
+        movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
+        movetween.start();
+        //movetweeny = game.add.tween(this.spriteframe).to({x:this.spriteframe.x,y:event.y},600);
+        //movetweeny.start();
+
+        this.movepanel.destroy();
+
+        //update the local x and y
+        this.x = this.spriteframe.x ;
+        this.y = this.spriteframe.y ;
+
+        /* 
+        while (this.spriteframe.x < event.x){
+            //this.spriteframe.body.velocity.x = 50;
+            testtext.text = " "+this.spriteframe.x +" to:" + event.x;
+
+            setTimeout (function (){
+                this.spriteframe.x ++;
+            }, 10);
+
+
+        }
+        */
+        //this.spriteframe.body.velocity.x = 0;
     }
 
 

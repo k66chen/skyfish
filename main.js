@@ -2,7 +2,7 @@
 //
 //
 //
-
+var global = "scope test";
 window.onload = function (){
     game = new Phaser.Game (500,800,Phaser.CANVAS,'gameContainer');
 
@@ -43,7 +43,7 @@ var gameState = function (game){
         var text;
         //set up mouse controls
         block.events.onInputDown.add (function (){
-            text = game.add.text (5,5,"clicked");
+            text = game.add.text (5,5,"clicked" + player.getType());
         })
         block.events.onInputUp.add (function (){
             text.destroy();
