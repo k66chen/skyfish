@@ -21,6 +21,7 @@ var gameState = function (game){
         game.load.image('ball','assets/sprites/balls.png');
         game.load.image('dude','assets/dude.png');
         game.load.image('plat','assets/kan.png');
+        game.load.image('trans','assets/transparent_tile.png');
     }
 
     this.create =  function () {
@@ -32,9 +33,11 @@ var gameState = function (game){
         game.add.sprite (0,0,'sky');
 
         var block = game.add.sprite(150,150, 'block');
+        var block = game.add.sprite(300,500, 'block');
+        //3,3 3,4, 4,3, 4,4 are blocked
 
         var player = new unit(game); 
-        player.create('plat',50,50,3,3,5);
+        player.create('Platinum','plat',50,50,3,3,5);
 
         block.inputEnabled = true;
         var text;
