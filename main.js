@@ -5,6 +5,11 @@
 var global = "scope test";
 var grid = []; //this is the 2d array that holds all the map data! (10x16)
 
+//since there can only be one movepanel at a time, decare it here
+var movepanel;
+
+var pausing = false; //if true, disables input until it's false
+
 
 window.onload = function (){
     game = new Phaser.Game (500,800,Phaser.CANVAS,'gameContainer');
@@ -25,7 +30,7 @@ function checkGrid (x,y){
         return true;
     }else{
 
-        console.log(grid[x][y].getType());
+        //console.log(grid[x][y].getType());
     }
 }
 var gameState = function (game){
@@ -54,7 +59,15 @@ var gameState = function (game){
         game.add.sprite (0,0,'sky');
 
         var block = game.add.sprite(150,150, 'block');
+        grid[3][3] = block;
+        grid[3][4] = block;
+        grid[4][3] = block;
+        grid[4][4] = block;
         var block = game.add.sprite(300,500, 'block');
+        grid[6][10] = block;
+        grid[6][11] = block;
+        grid[7][10] = block;
+        grid[7][11] = block;
         //3,3 3,4, 4,3, 4,4 are blocked
 
         var player = new unit(game); 

@@ -14,8 +14,9 @@ var unit = function (game){
     this.infoswitch = false;
     this.movedone = true;
 
-    this.movepanel = game.add.group();
+    //movepanel = game.add.group();
     this.tempmovepanel;
+    this.tempgrid;
     var testtext = game.add.text(0,0);
 
     this.getType = function (){
@@ -50,36 +51,87 @@ var unit = function (game){
 
                 //this.infotext.fill = "#ff0044";
                 this.infoswitch = true;
+                if (movepanel != undefined){
+                    //remove move panels on other units
+                    movepanel.destroy();
+                }
 
-                this.movepanel = game.add.group();
-
+                movepanel = game.add.group();
+                this.tempgrid = new Array (10);
+                for (var i =0; i< 10;i++){
+                    this.tempgrid[i] = new Array (16);
+                }
+                this.movePathFind (this.x,this.y,this.movement);
+/*
                 //determine movable tiles in the game
                 for (i = 1; i< this.movement+1; i++){
                     //check the grid for each
-                    if (checkGrid((this.x+50*i)/50,this.y/50)){this.movepanel.create(this.x + 50*i,this.y,'trans');}
-                    if (checkGrid((this.x-50*i)/50,this.y/50)){this.movepanel.create (this.x - 50*i,this.y,'trans');}
-                    if (checkGrid((this.x)/50,(this.y+50*i)/50)){this.movepanel.create (this.x,this.y+50*i,'trans');}
-                    if (checkGrid((this.x)/50,(this.y-50*i)/50)) {this.movepanel.create (this.x,this.y-50*i,'trans');}
+                    if (checkGrid((this.x+50*i)/50,this.y/50)){movepanel.create(this.x + 50*i,this.y,'trans');}
+                    if (checkGrid((this.x-50*i)/50,this.y/50)){movepanel.create (this.x - 50*i,this.y,'trans');}
+                    if (checkGrid((this.x)/50,(this.y+50*i)/50)){movepanel.create (this.x,this.y+50*i,'trans');}
+                    if (checkGrid((this.x)/50,(this.y-50*i)/50)) {movepanel.create (this.x,this.y-50*i,'trans');}
                     //diagonal panels
-                    //this.movepanel.create (this.x-50*(i-1),this.y-50*(i-1),'trans');
+                    //movepanel.create (this.x-50*(i-1),this.y-50*(i-1),'trans');
                 }
-                this.movepanel.setAll ('inputEnabled',true);
-                this.movepanel.setAll ('alpha',0.2);
-                this.movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
+                */
+                movepanel.setAll ('inputEnabled',true);
+                movepanel.setAll ('alpha',0.2);
+                movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
             }else{
                 //this.infotext.destroy();
-                this.movepanel.destroy();
+                movepanel.destroy();
                 this.infoswitch = false;
             }
         }
     }
 
-    this.movepanelInputAdd =function (){
-        this.movepanel.inputEnabled = true;
-        this.movepanel.alpha = 0.2;
-        //   this.movepanel.events.onInputDown.add(this.move,self);
+    this.movePathFind = function (x,y,tempmv){
+        //recursively check squares around the user until move is 0
+
+        //check this x,y
+        if (tempmv > 0){
+            //check that this grid is not itself
+            if (this.x == x && this.y == y){
+                console.log ("this");
+                //check up,left,right,down
+                this.movePathFind(x+50,y,tempmv);
+                this.movePathFind(x-50,y,tempmv);
+                this.movePathFind(x,y-50,tempmv);
+                this.movePathFind(x,y+50,tempmv);
+
+            }
+            else if ((checkGrid(x/50,y/50))){
+                //this panel is empty, add move panel here
+                //check if we already have a movepanel here though
+                if (this.tempgrid[x/50][y/50] != 'as'){
+                    movepanel.create (x,y,'trans');
+                    this.tempgrid[x/50][y/50] = 'as';
+                }
+
+                tempmv -=1;
+                if (tempmv > 0){
+                    //check up,left,right,down
+                    this.movePathFind(x+50,y,tempmv);
+                    this.movePathFind(x-50,y,tempmv);
+                    this.movePathFind(x,y-50,tempmv);
+                    this.movePathFind(x,y+50,tempmv);
+                }
+            }
+            else{
+                console.log ("err");
+            }
+            //else this path is blocked
+        }
 
     }
+
+    movepanelInputAdd =function (){
+        movepanel.inputEnabled = true;
+        movepanel.alpha = 0.2;
+        //   movepanel.events.onInputDown.add(this.move,self);
+
+    }
+
 
     this.move = function (event){
         //move the player depending on which movepanel was picked (panel in mouse event)
@@ -109,7 +161,7 @@ var unit = function (game){
         //movetweeny = game.add.tween(this.spriteframe).to({x:this.spriteframe.x,y:event.y},600);
         //movetweeny.start();
 
-        this.movepanel.destroy();
+        movepanel.destroy();
 
         //update the local x and y
         //update the grid
