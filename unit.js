@@ -19,7 +19,7 @@ var unit = function (game){
     var testtext = game.add.text(0,0);
 
     this.getType = function (){
-        return "unit" + global;
+        return "unit";
     }
 
     this.create = function (name,sprite, hp, sp, movement,x,y){
@@ -44,8 +44,6 @@ var unit = function (game){
     this.click = function (){
         if (this.movedone){
             if (!this.infoswitch){
-                this.x = this.spriteframe.x ;
-                this.y = this.spriteframe.y ;
 
                 //this.infotext = game.add.text (this.x+50,this.y+10,this.name + " Hp: "+this.hp + " Mv: " + this.movement);
                 //show movement panels
@@ -57,10 +55,11 @@ var unit = function (game){
 
                 //determine movable tiles in the game
                 for (i = 1; i< this.movement+1; i++){
-                    this.movepanel.create(this.x + 50*i,this.y,'trans');
-                    this.movepanel.create (this.x - 50*i,this.y,'trans');
-                    this.movepanel.create (this.x,this.y+50*i,'trans');
-                    this.movepanel.create (this.x,this.y-50*i,'trans');
+                    //check the grid for each
+                    if (checkGrid((this.x+50*i)/50,this.y/50)){this.movepanel.create(this.x + 50*i,this.y,'trans');}
+                    if (checkGrid((this.x-50*i)/50,this.y/50)){this.movepanel.create (this.x - 50*i,this.y,'trans');}
+                    if (checkGrid((this.x)/50,(this.y+50*i)/50)){this.movepanel.create (this.x,this.y+50*i,'trans');}
+                    if (checkGrid((this.x)/50,(this.y-50*i)/50)) {this.movepanel.create (this.x,this.y-50*i,'trans');}
                     //diagonal panels
                     //this.movepanel.create (this.x-50*(i-1),this.y-50*(i-1),'trans');
                 }
@@ -88,6 +87,7 @@ var unit = function (game){
         //game.add.text (0,0,"x:"+event.x+"y:"+event.y);
         //   this.spriteframe.body.velocity.x= 150;
         this.infoswitch = false;
+        //destroy the old element in grid
         //determine destination x and destination y
         var destx = event.x /50;
         var desty = event.y / 50;
@@ -103,6 +103,7 @@ var unit = function (game){
         movetween.onComplete.add(function (){
             this.movedone = true;
             this.tempmovepanel.destroy();
+            this.updateGrid ();
         },this);
         movetween.start();
         //movetweeny = game.add.tween(this.spriteframe).to({x:this.spriteframe.x,y:event.y},600);
@@ -111,8 +112,7 @@ var unit = function (game){
         this.movepanel.destroy();
 
         //update the local x and y
-        this.x = this.spriteframe.x ;
-        this.y = this.spriteframe.y ;
+        //update the grid
 
         /* 
            while (this.spriteframe.x < event.x){
@@ -127,6 +127,14 @@ var unit = function (game){
         }
         */
         //this.spriteframe.body.velocity.x = 0;
+    }
+    this.updateGrid = function(){
+        delete grid[this.x/50][this.y/50];
+        console.log ("deleted"+this.x/50+","+this.y/50);
+        this.x = this.spriteframe.x;
+        this.y = this.spriteframe.y;
+        grid[this.x/50][this.y/50] = this;
+
     }
 
 
