@@ -24,6 +24,7 @@ var unit = function (game){
     }
 
     this.create = function (name,sprite, hp, sp, movement,x,y){
+        //constructor for a generic unit sprite
         this.name = name;
         this.hp = hp;
         this.sp = sp;
@@ -42,41 +43,41 @@ var unit = function (game){
         this.spriteframe.events.onInputDown.add(this.click,this);
     }
 
+    this.showMenu = function (){
+
+    }
+
+    this.moveAction = function (){
+        //this.infotext = game.add.text (this.x+50,this.y+10,this.name + " Hp: "+this.hp + " Mv: " + this.movement);
+        //this.infotext.fill = "#ff0044";
+        this.infoswitch = true;
+        if (movepanel != undefined){
+            //remove move panels on other units
+            movepanel.destroy();
+        }
+        this.setTempGrid ();
+
+        movepanel = game.add.group();
+        this.moveArray = new Array();
+        this.movePathFind (this.x,this.y,this.movement,'x',moveArray);
+        movepanel.setAll ('inputEnabled',true);
+        movepanel.setAll ('alpha',0.2);
+        movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
+
+    }
+
+    this.setTempGrid = function (){
+        this.tempgrid = new Array (10);
+        for (var i =0; i< 10;i++){
+            this.tempgrid[i] = new Array (16);
+        }
+
+    }
     this.click = function (){
+        //on click any unit
         if (this.movedone){
             if (!this.infoswitch){
-
-                //this.infotext = game.add.text (this.x+50,this.y+10,this.name + " Hp: "+this.hp + " Mv: " + this.movement);
-                //show movement panels
-
-                //this.infotext.fill = "#ff0044";
-                this.infoswitch = true;
-                if (movepanel != undefined){
-                    //remove move panels on other units
-                    movepanel.destroy();
-                }
-
-                movepanel = game.add.group();
-                this.tempgrid = new Array (10);
-                for (var i =0; i< 10;i++){
-                    this.tempgrid[i] = new Array (16);
-                }
-                this.movePathFind (this.x,this.y,this.movement);
-/*
-                //determine movable tiles in the game
-                for (i = 1; i< this.movement+1; i++){
-                    //check the grid for each
-                    if (checkGrid((this.x+50*i)/50,this.y/50)){movepanel.create(this.x + 50*i,this.y,'trans');}
-                    if (checkGrid((this.x-50*i)/50,this.y/50)){movepanel.create (this.x - 50*i,this.y,'trans');}
-                    if (checkGrid((this.x)/50,(this.y+50*i)/50)){movepanel.create (this.x,this.y+50*i,'trans');}
-                    if (checkGrid((this.x)/50,(this.y-50*i)/50)) {movepanel.create (this.x,this.y-50*i,'trans');}
-                    //diagonal panels
-                    //movepanel.create (this.x-50*(i-1),this.y-50*(i-1),'trans');
-                }
-                */
-                movepanel.setAll ('inputEnabled',true);
-                movepanel.setAll ('alpha',0.2);
-                movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
+                this.showMenu();
             }else{
                 //this.infotext.destroy();
                 movepanel.destroy();
@@ -85,36 +86,40 @@ var unit = function (game){
         }
     }
 
-    this.movePathFind = function (x,y,tempmv){
+    this.movePathFind = function (x,y,tempmv,dir,moveArray){
         //recursively check squares around the user until move is 0
+        //TODO: also save the path for that panel for future moves
 
+        moveArray.push(dir);
         //check this x,y
         if (tempmv > 0){
             //check that this grid is not itself
             if (this.x == x && this.y == y){
                 console.log ("this");
-                //check up,left,right,down
-                this.movePathFind(x+50,y,tempmv);
-                this.movePathFind(x-50,y,tempmv);
-                this.movePathFind(x,y-50,tempmv);
-                this.movePathFind(x,y+50,tempmv);
+                //check up,left,right,down = skip pushing to the movearray here
+                this.movePathFind(x+50,y,tempmv,'e',moveArray);
+                this.movePathFind(x-50,y,tempmv,'w',moveArray);
+                this.movePathFind(x,y-50,tempmv,'s',moveArray);
+                this.movePathFind(x,y+50,tempmv,'n',moveArray);
 
             }
             else if ((checkGrid(x/50,y/50))){
                 //this panel is empty, add move panel here
                 //check if we already have a movepanel here though
-                if (this.tempgrid[x/50][y/50] != 'as'){
+                if (this.tempgrid[x/50][y/50] == undefined){
                     movepanel.create (x,y,'trans');
-                    this.tempgrid[x/50][y/50] = 'as';
+                    //save how we got to this panel onto the tempgrid
+                    this.tempgrid[x/50][y/50] = moveArray;
                 }
 
                 tempmv -=1;
                 if (tempmv > 0){
                     //check up,left,right,down
-                    this.movePathFind(x+50,y,tempmv);
-                    this.movePathFind(x-50,y,tempmv);
-                    this.movePathFind(x,y-50,tempmv);
-                    this.movePathFind(x,y+50,tempmv);
+                    this.movePathFind(x+50,y,tempmv,'e',moveArray);
+                    this.movePathFind(x-50,y,tempmv,'w',moveArray);
+                    this.movePathFind(x,y-50,tempmv,'s',moveArray);
+                    this.movePathFind(x,y+50,tempmv,'n',moveArray);
+
                 }
             }
             else{
@@ -147,9 +152,13 @@ var unit = function (game){
 
         //game.physics.arcade.moveToXY (this.spriteframe,event.x,this.spriteframe.y,50,500); 
         this.spriteframe.body.moves = false;
+
+
         this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
         this.tempmovepanel.alpha = 0.5;
+
         this.movedone = false;
+        //do x tween then y tween
         movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
         //x tween complete, add y tween
         movetween.onComplete.add(function (){
@@ -181,6 +190,7 @@ var unit = function (game){
         //this.spriteframe.body.velocity.x = 0;
     }
     this.updateGrid = function(){
+        //update the global grid to reflect our move
         delete grid[this.x/50][this.y/50];
         console.log ("deleted"+this.x/50+","+this.y/50);
         this.x = this.spriteframe.x;
