@@ -1,9 +1,8 @@
-# PHASER TACTICS RPG
+## SKYFISH
+### PHASER TACTICS RPG
 This is a grid turn based RPG made in phaser (WIP). Inspired by games such as Final Fantasy Tactics, Disgaea, Fire Emblem.
 
-Made with Phaser, assets are placeholder for now. 
-
-
+Made with Phaser, assets are placeholder for now will self-draw later
 
 ==TODO==
 
@@ -12,10 +11,14 @@ Made with Phaser, assets are placeholder for now.
 ~~Add basic grid paradigm~~
 
 ~~Implement pathfinding algorithm (alike fire emblem)~~
+    -save path so movement feels realistic
 
-Add terrian class
+Add menu when unit is clicked (Attack (Skill), move, wait)
+    -Add combat flow between units
 
-Add battle between units (might need battle class?)
+Add terrian class for maps
+
 
 Add turn based game flow
+    -get code from VM
 

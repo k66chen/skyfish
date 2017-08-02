@@ -72,10 +72,8 @@ var gameState = function (game){
 
         var player = new unit(game); 
         var enemy = new unit(game);
-        player.create('Platinum','plat',50,50,3,3,5);
-        grid[3][5] = player;
+        player.create('Platinum','plat',50,50,6,5,6);
         enemy.create('Goblin','goblin',50,50,2,1,3);
-        grid[1][3] = enemy;
 
         block.inputEnabled = true;
         var text;

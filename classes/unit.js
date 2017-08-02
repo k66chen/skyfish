@@ -38,13 +38,16 @@ var unit = function (game){
         //this.spriteframe.collideWorldBounds = true;
 
         //create on click functions    
-        //
         this.spriteframe.inputEnabled = true;
         this.spriteframe.events.onInputDown.add(this.click,this);
+
+        //update global grid object
+        grid[x][y] = this;
     }
 
     this.showMenu = function (){
-
+        //set marker here to reverse gamestate.
+        this.moveAction();
     }
 
     this.moveAction = function (){
@@ -59,7 +62,7 @@ var unit = function (game){
 
         movepanel = game.add.group();
         this.moveArray = new Array();
-        this.movePathFind (this.x,this.y,this.movement,'x',moveArray);
+        this.movePathFind (this.x,this.y,this.movement,'x',this.moveArray);
         movepanel.setAll ('inputEnabled',true);
         movepanel.setAll ('alpha',0.2);
         movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
@@ -95,7 +98,6 @@ var unit = function (game){
         if (tempmv > 0){
             //check that this grid is not itself
             if (this.x == x && this.y == y){
-                console.log ("this");
                 //check up,left,right,down = skip pushing to the movearray here
                 this.movePathFind(x+50,y,tempmv,'e',moveArray);
                 this.movePathFind(x-50,y,tempmv,'w',moveArray);
@@ -123,7 +125,6 @@ var unit = function (game){
                 }
             }
             else{
-                console.log ("err");
             }
             //else this path is blocked
         }
