@@ -158,6 +158,7 @@ var unit = function (game){
         var desty = event.y /50;
         //var testtext = game.add.text (0,0,"x:"+this.spriteframe.x+"dx:"+destx);
         console.log (this.tempgrid[destx][desty])
+        var pathMoveArray = this.tempgrid[destx][desty];
 
         //game.physics.arcade.moveToXY (this.spriteframe,event.x,this.spriteframe.y,50,500); 
         this.spriteframe.body.moves = false;
@@ -167,43 +168,93 @@ var unit = function (game){
 
         this.movedone = false;
 
+        this.moveTween(pathMoveArray);
         //do x tween then y tween
-        movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
+        /*movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
         //x tween complete, add y tween
-
 
         movetween.onComplete.add(function (){
             this.movedone = true;
             this.tempmovepanel.destroy();
             this.updateGrid ();
         },this);
-        movetween.start();
+        movetween.start();*/
         //movetweeny = game.add.tween(this.spriteframe).to({x:this.spriteframe.x,y:event.y},600);
         //movetweeny.start();
 
         movepanel.destroy();
 
-        //update the local x and y
-        //update the grid
 
-        /* 
-           while (this.spriteframe.x < event.x){
-        //this.spriteframe.body.velocity.x = 50;
-        testtext.text = " "+this.spriteframe.x +" to:" + event.x;
-
-        setTimeout (function (){
-        this.spriteframe.x ++;
-        }, 10);
-
-
-        }
-        */
-        //this.spriteframe.body.velocity.x = 0;
     };
+
+    //takes the movement array and moves accordingly
+    //saves movetweens and chains them depending on the direction
+    this.moveTween = function (moveArray){
+        var units = 0;
+        var initialDir = moveArray[0];
+        var tweenChain = new Array ();
+        var originalx = this.x;
+        var originaly = this.y;
+
+        for (i =0; i< moveArray.length; i++){
+            console.log(i);
+            if (moveArray[i] != initialDir){
+                //do the move, set the initialdir to new
+                if (initialDir == 'e'){
+                    movetween = game.add.tween(this.spriteframe).to({x:originalx + 50*units,y:originaly},units*150);
+                    originalx += 50*units;
+                }else if (initialDir == 'w'){
+                    movetween = game.add.tween(this.spriteframe).to({x:originalx - 50*units,y:originaly},units*150);
+                    originalx -= 50*units;
+                }else if (initialDir == 'n'){
+                    movetween = game.add.tween(this.spriteframe).to({x:originalx,y:originaly + 50*units},units*150);
+                    originaly += 50*units;
+                }else if (initialDir == 's'){
+                    movetween = game.add.tween(this.spriteframe).to({x:originalx,y:originaly - 50*units},units*150);
+                    originaly -= 50*units;
+                }
+                tweenChain.push (movetween);
+
+                units = 0;
+                initialDir = moveArray[i];
+                units +=1;
+            }else{
+                units +=1;
+            }
+        }
+        console.log ("End tween is " + initialDir + " units:" + units);
+        if (initialDir == 'e'){
+            movetween = game.add.tween(this.spriteframe).to({x:originalx + 50*units,y:originaly},units*150);
+        }else if (initialDir == 'w'){
+            movetween = game.add.tween(this.spriteframe).to({x:originalx - 50*units,y:originaly},units*150);
+        }else if (initialDir == 'n'){
+            movetween = game.add.tween(this.spriteframe).to({x:originalx,y:originaly + 50*units},units*150);
+        }else if (initialDir == 's'){
+            movetween = game.add.tween(this.spriteframe).to({x:originalx,y:originaly - 50*units},units*150);
+        }
+        tweenChain.push(movetween);
+        console.log(tweenChain);
+
+        for (i = 0;i<tweenChain.length;i++) {
+
+            if (i < tweenChain.length -1){
+                tweenChain[i].chain(tweenChain[i+1]);
+                tweenChain[i].onComplete.add(function (){
+                },this);
+            }
+        }
+        tweenChain.slice(-1)[0].onComplete.add(function (){
+            this.movedone = true;
+            this.tempmovepanel.destroy();
+            this.updateGrid ();
+        },this);
+
+        tweenChain[0].start();
+    }
+
     this.updateGrid = function(){
         //update the global grid to reflect our move
         delete grid[this.x/50][this.y/50];
-        console.log ("deleted"+this.x/50+","+this.y/50);
         this.x = this.spriteframe.x;
         this.y = this.spriteframe.y;
         grid[this.x/50][this.y/50] = this;
