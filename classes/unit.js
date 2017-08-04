@@ -116,6 +116,10 @@ var unit = function (game){
                     movepanel.create (x,y,'trans');
                     //save how we got to this panel onto the tempgrid
                     this.tempgrid[x/50][y/50] = moveArrayCopy;
+                }else{
+                    if (moveArrayCopy.length < this.tempgrid[x/50][y/50].length){
+                        this.tempgrid[x/50][y/50] = moveArrayCopy;
+                    }
                 }
 
                 tempmv -=1;
