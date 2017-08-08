@@ -19,11 +19,19 @@ var unit = function (game){
     this.tempgrid;
     var testtext = game.add.text(0,0);
 
+    //turn control variables
+    // turn is over after 1 move and 1 attack action, or on 'wait' action
+    this.moved = false;
+
+    this.isEnemy = false;
+
     this.getType = function (){
         return "unit";
     };
 
-    this.create = function (name,sprite, hp, sp, movement,x,y){
+    //disables movement controls for this unit, turn on AI
+
+    this.create = function (name,sprite, hp, sp, movement,x,y, enemy){
         //constructor for a generic unit sprite
         this.name = name;
         this.hp = hp;
@@ -32,14 +40,28 @@ var unit = function (game){
 
         this.x = x*50;
         this.y = y*50;
-        this.spriteframe = game.add.sprite (this.x,this.y,sprite); 
+        if (enemy == 1){
+            this.isEnemy = true;
+        }
+        //draw the enemy tile under
+        if (this.isEnemy){
+            this.enemyOverlay = game.add.sprite (this.x,this.y,'enemy');
+            this.enemyOverlay.alpha = 0.4;
+        }
+        this.spriteframe = game.add.sprite (this.x,this.y,sprite);
         game.physics.arcade.enable (this.spriteframe);
         //this.spriteframe.body.gravity.y = 300;
         //this.spriteframe.collideWorldBounds = true;
 
-        //create on click functions    
-        this.spriteframe.inputEnabled = true;
-        this.spriteframe.events.onInputDown.add(this.click,this);
+
+        //create on click functions
+        if (!this.isEnemy) {
+            this.spriteframe.inputEnabled = true;
+            this.spriteframe.events.onInputDown.add(this.click, this);
+        }else{
+            this.spriteframe.inputEnabled = true;
+            this.spriteframe.events.onInputDown.add(this.enemyClick, this);
+        }
 
         //update global grid object
         grid[x][y] = this;
@@ -56,7 +78,6 @@ var unit = function (game){
         this.infoswitch = true;
         if (movepanel != undefined){
             //remove move panels on other units
-            movepanel.destroy();
         }
         this.setTempGrid ();
 
@@ -64,7 +85,7 @@ var unit = function (game){
         this.moveArray = new Array();
         this.movePathFind (this.x,this.y,this.movement,'x',new Array());
         movepanel.setAll ('inputEnabled',true);
-        movepanel.setAll ('alpha',0.2);
+        movepanel.setAll ('alpha',0.3);
         movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
 
     };
@@ -77,7 +98,7 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
-        if (this.movedone){
+        if (this.movedone && !this.moved){
             if (!this.infoswitch){
                 this.showMenu();
             }else{
@@ -86,6 +107,10 @@ var unit = function (game){
                 this.infoswitch = false;
             }
         }
+    };
+
+    this.enemyClick = function (){
+
     };
 
     this.movePathFind = function (x,y,tempmv,dir,moveArray){
@@ -260,4 +285,11 @@ var unit = function (game){
         grid[this.x/50][this.y/50] = this;
 
     };
+
+    this.updateStatus = function(){
+       //update the status of this unit, if HP is 0 it is dead
+        if (this.hp <=0 ){
+            this.spriteframe.destroy();
+        }
+    }
 };
