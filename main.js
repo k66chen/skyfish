@@ -11,6 +11,8 @@ var movepanel;
 var pausing = false; //if true, disables input until it's false
 
 
+var menu;
+
 window.onload = function (){
     game = new Phaser.Game (500,800,Phaser.CANVAS,'gameContainer');
 
@@ -43,7 +45,9 @@ var gameState = function (game){
         game.load.image('plat','assets/kan.png');
         game.load.image('goblin','assets/gob.png');
         game.load.image('trans','assets/transparent_tile.png');
+        game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
     }
+
 
     this.create =  function () {
 
@@ -52,7 +56,8 @@ var gameState = function (game){
         for (var i = 0;i < 10; i++){
             grid[i] = new Array(16);
         }
-         
+
+        menu = new menu (game);
         game.physics.startSystem(Phaser.Physics.BOX2D);
         game.stage.backgroundColor = '#2d2d2d';
 
@@ -74,6 +79,8 @@ var gameState = function (game){
         var enemy = new unit(game);
         player.create('Platinum','plat',50,50,6,5,6);
         enemy.create('Goblin','goblin',50,50,2,1,3);
+
+
 
         block.inputEnabled = true;
         var text;

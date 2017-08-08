@@ -17,7 +17,11 @@ var unit = function (game){
     //movepanel = game.add.group();
     this.tempmovepanel;
     this.tempgrid;
-    var testtext = game.add.text(0,0);
+
+
+
+
+    this.hasTurn = true;
 
     this.getType = function (){
         return "unit";
@@ -47,7 +51,7 @@ var unit = function (game){
 
     this.showMenu = function (){
         //set marker here to reverse gamestate.
-        this.moveAction();
+        menu.drawUnitMenu(this);
     };
 
     this.moveAction = function (){
@@ -77,7 +81,7 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
-        if (this.movedone){
+        if (this.movedone && this.hasTurn){
             if (!this.infoswitch){
                 this.showMenu();
             }else{
@@ -260,4 +264,9 @@ var unit = function (game){
         grid[this.x/50][this.y/50] = this;
 
     };
+
+    this.setTurnOver = function (){
+        this.spriteframe.tint = 0x777777;
+        this.hasTurn = false;
+    }
 };
