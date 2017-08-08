@@ -17,7 +17,11 @@ var unit = function (game){
     //movepanel = game.add.group();
     this.tempmovepanel;
     this.tempgrid;
-    var testtext = game.add.text(0,0);
+
+
+
+
+    this.hasTurn = true;
 
     //turn control variables
     // turn is over after 1 move and 1 attack action, or on 'wait' action
@@ -69,7 +73,7 @@ var unit = function (game){
 
     this.showMenu = function (){
         //set marker here to reverse gamestate.
-        this.moveAction();
+        menu.drawUnitMenu(this);
     };
 
     this.moveAction = function (){
@@ -98,7 +102,7 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
-        if (this.movedone && !this.moved){
+        if (this.movedone && this.hasTurn){
             if (!this.infoswitch){
                 this.showMenu();
             }else{
@@ -290,6 +294,10 @@ var unit = function (game){
        //update the status of this unit, if HP is 0 it is dead
         if (this.hp <=0 ){
             this.spriteframe.destroy();
-        }
+    };
+
+    this.setTurnOver = function (){
+        this.spriteframe.tint = 0x777777;
+        this.hasTurn = false;
     }
 };
