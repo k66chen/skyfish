@@ -46,10 +46,7 @@ var unit = function (game){
             this.isEnemy = true;
         }
         //draw the enemy tile under
-        if (this.isEnemy){
-            this.enemyOverlay = game.add.sprite (this.x,this.y,'enemy');
-            this.enemyOverlay.alpha = 0.4;
-        }
+
         this.spriteframe = game.add.sprite (this.x,this.y,sprite);
         game.physics.arcade.enable (this.spriteframe);
         //this.spriteframe.body.gravity.y = 300;
@@ -63,6 +60,7 @@ var unit = function (game){
         }else{
             this.spriteframe.inputEnabled = true;
             this.spriteframe.events.onInputDown.add(this.enemyClick, this);
+            this.spriteframe.tint = 0xff644f;
         }
 
         //update global grid object

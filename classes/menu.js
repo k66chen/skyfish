@@ -2,6 +2,9 @@ var menu = function (game) {
     var unitMenuGroup;
     var unitMenux;
     var unitMenuy;
+
+    this.menutargeter;
+
     this.drawIntroMenu = function () {
     };
     this.drawUnitMenu = function (unit){
@@ -16,6 +19,9 @@ var menu = function (game) {
         unitMenux = unit.x+50;
         unitMenuy = unit.y;
 
+        //draw targeting reticle on this unit
+        this.menutargeter = game.add.sprite (unit.x,unit.y,'menutargeter');
+
         this.determineMenuLocation(unit);
 
         unitMenuGroup = game.add.group();
@@ -26,9 +32,13 @@ var menu = function (game) {
         moveButton = game.add.button(unitMenux, unitMenuy+70, 'button', function(){
             this.unitMenuMoveClick(unit);
         }, this, 2, 1, 0);
+        attackButton = game.add.button(unitMenux, unitMenuy+130, 'button', function(){
+            this.unitMenuMoveClick(unit);
+        }, this, 2, 1, 0);
 
         unitMenuGroup.add (waitButton);
         unitMenuGroup.add (moveButton);
+        unitMenuGroup.add (attackButton);
     };
 
     this.determineMenuLocation = function (unit){
@@ -45,6 +55,7 @@ var menu = function (game) {
     };
 
     this.unitMenuMoveClick = function(unit){
+        this.menutargeter.destroy();
         unitMenuGroup.destroy();
         unit.moveAction();
         unit.inMenu = false;
@@ -54,6 +65,7 @@ var menu = function (game) {
         //attackaction
     };
     this.unitMenuWaitClick = function(unit){
+        this.menutargeter.destroy() ;
         unitMenuGroup.destroy();
         unit.setTurnOver();
         unit.inMenu = false;

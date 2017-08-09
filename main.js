@@ -52,6 +52,7 @@ var gameState = function (game){
         game.load.image('goblin','assets/gob.png');
         game.load.image('trans','assets/transparent_tile.png');
         game.load.image('enemy','assets/enemy_tile.png');
+        game.load.image('menutargeter','assets/target.png');
         game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
     }
 
