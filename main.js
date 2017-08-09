@@ -101,9 +101,11 @@ var gameState = function (game){
 
 
         var player = new unit(game);
+        var player2 = new unit(game);
         var enemy = new unit(game);
         //unit object (HP,sp,MOVE,x,y,enemy?)
         player.create('Platinum','plat',50,50,8,8,12,0);
+        player2.create('Platinum','plat',50,50,8,3,12,0);
         enemy.create('Gobli1','goblin',50,50,2,1,3,1);
         enemy.create('Goblin2','goblin',50,50,1,2,5,1);
         enemy.create('Goblin3','goblin',50,50,2,2,3,1);

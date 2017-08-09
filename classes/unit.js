@@ -18,9 +18,7 @@ var unit = function (game){
     this.tempmovepanel;
     this.tempgrid;
 
-
-
-
+    this.inMenu = false;
     this.hasTurn = true;
 
     //turn control variables
@@ -102,7 +100,7 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
-        if (this.movedone && this.hasTurn){
+        if (this.movedone && this.hasTurn && !this.inMenu && !lock){
             if (!this.infoswitch){
                 this.showMenu();
             }else{
@@ -279,7 +277,7 @@ var unit = function (game){
         },this);
 
         tweenChain[0].start();
-    }
+    };
 
     this.updateGrid = function(){
         //update the global grid to reflect our move
@@ -292,12 +290,13 @@ var unit = function (game){
 
     this.updateStatus = function(){
        //update the status of this unit, if HP is 0 it is dead
-        if (this.hp <=0 ){
+        if (this.hp <=0 ) {
             this.spriteframe.destroy();
+        }
     };
 
     this.setTurnOver = function (){
         this.spriteframe.tint = 0x777777;
         this.hasTurn = false;
-    }
+    };
 };
