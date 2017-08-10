@@ -272,6 +272,8 @@ var unit = function (game){
             this.movedone = true;
             this.tempmovepanel.destroy();
             this.updateGrid ();
+            lock = false;
+            menu.drawUnitMenu (this);
         },this);
 
         tweenChain[0].start();
@@ -294,7 +296,20 @@ var unit = function (game){
     };
 
     this.setTurnOver = function (){
-        this.spriteframe.tint = 0x777777;
+        if (this.isEnemy){
+            this.spriteframe.tint = 0x702e2e;
+        }else{
+            this.spriteframe.tint = 0x777777;
+        }
         this.hasTurn = false;
+    };
+
+    this.refreshTurn = function (){
+        this.hasTurn = true;
+        if (this.isEnemy){
+            this.spriteframe.tint = 0xff644f;
+        }else {
+            this.spriteframe.tint = 0xFFFFFF;
+        }
     };
 };

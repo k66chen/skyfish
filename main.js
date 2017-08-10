@@ -15,8 +15,15 @@ var movepanel;
 var lock = false;
 var pausing = false; //if true, disables input until it's false
 
-
+//generic menu object handles our unit options and title screen
 var menu;
+
+//ally and enemy arrays determine the turn pacing
+var allies = [];
+var enemies = [];
+
+var check = true;
+var turn = 0;
 
 window.onload = function (){
     game = new Phaser.Game (500,800,Phaser.CANVAS,'gameContainer');
@@ -54,6 +61,9 @@ var gameState = function (game){
         game.load.image('enemy','assets/enemy_tile.png');
         game.load.image('menutargeter','assets/target.png');
         game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+        game.load.spritesheet('wait_button', 'assets/unit_wait_button.png', 100, 50);
+        game.load.spritesheet('move_button', 'assets/unit_move_button.png', 100, 50);
+        game.load.spritesheet('attack_button', 'assets/unit_attack_button.png', 100, 50);
     }
 
 
@@ -104,29 +114,50 @@ var gameState = function (game){
         var player = new unit(game);
         var player2 = new unit(game);
         var enemy = new unit(game);
+        var enemy2 = new unit(game);
+        var enemy3 = new unit(game);
         //unit object (HP,sp,MOVE,x,y,enemy?)
         player.create('Platinum','plat',50,50,8,8,12,0);
         player2.create('Platinum','plat',50,50,8,3,12,0);
         enemy.create('Gobli1','goblin',50,50,2,1,3,1);
-        enemy.create('Goblin2','goblin',50,50,1,2,5,1);
-        enemy.create('Goblin3','goblin',50,50,2,2,3,1);
+        enemy2.create('Goblin2','goblin',50,50,1,2,5,1);
+        enemy3.create('Goblin3','goblin',50,50,2,2,3,1);
 
         ai = new enemyAI(enemy);
 
-
-
-        block.inputEnabled = true;
-        var text;
-        //set up mouse controls
-        block.events.onInputDown.add (function (){
-            text = game.add.text (5,5,"clicked" + player.getType());
-        })
-        block.events.onInputUp.add (function (){
-            text.destroy();
-        })
+        enemy.setTurnOver();
+        enemy2.setTurnOver();
+        enemy3.setTurnOver();
+        enemies.push(enemy);
+        enemies.push(enemy2);
+        enemies.push(enemy3);
+        allies.push(player);
+        allies.push(player2);
     }
 
     this.update = function(){
+        for (var i =0;i<allies.length;i++){
+            if (allies[i].hasTurn){
+                check = false;
+                break;
+            }
+        }
+        for (var i =0;i<enemies.length;i++){
+            if (enemies[i].hasTurn){
+                break;
+            }
+        }
+        if (check){
+            turn+=1;
+            console.log("turn" + turn);
+            for (var i =0;i<allies.length;i++){
+                allies[i].refreshTurn();
+            }
+            for (var i =0;i<enemies.length;i++){
+                enemies[i].refreshTurn();
+            }
+        }
+        check = true;
     }
 
     this.render = function (){

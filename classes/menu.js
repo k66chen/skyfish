@@ -26,15 +26,17 @@ var menu = function (game) {
 
         unitMenuGroup = game.add.group();
 
-        waitButton = game.add.button(unitMenux, unitMenuy, 'button', function(){
+        waitButton = game.add.button(unitMenux, unitMenuy+100, 'wait_button', function(){
             this.unitMenuWaitClick(unit);
         }, this, 2, 1, 0);
-        moveButton = game.add.button(unitMenux, unitMenuy+70, 'button', function(){
+        moveButton = game.add.button(unitMenux, unitMenuy, 'move_button', function(){
             this.unitMenuMoveClick(unit);
         }, this, 2, 1, 0);
-        attackButton = game.add.button(unitMenux, unitMenuy+130, 'button', function(){
+        attackButton = game.add.button(unitMenux, unitMenuy+50, 'attack_button', function(){
             this.unitMenuMoveClick(unit);
         }, this, 2, 1, 0);
+
+        //determine what buttons to grey out
 
         unitMenuGroup.add (waitButton);
         unitMenuGroup.add (moveButton);
@@ -46,7 +48,7 @@ var menu = function (game) {
         console.log(unit.y);
         if (unit.x >= 400){
             //flip menu
-            unitMenux = unit.x - 200;
+            unitMenux = unit.x - 100;
         }
         if (unit.y >= 650){
             unitMenuy = unit.y - 100;
@@ -59,7 +61,6 @@ var menu = function (game) {
         unitMenuGroup.destroy();
         unit.moveAction();
         unit.inMenu = false;
-        lock = false;
     };
     this.unitMenuAttackClick = function(unit){
         //attackaction
@@ -71,4 +72,10 @@ var menu = function (game) {
         unit.inMenu = false;
         lock = false;
     };
+
+    this.destroyUnitMenu = function(unit){
+        this.menutargeter.destroy() ;
+        unit.inMenu = false;
+        lock = false;
+    }
 };
