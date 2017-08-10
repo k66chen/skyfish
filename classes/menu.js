@@ -33,7 +33,7 @@ var menu = function (game) {
             this.unitMenuMoveClick(unit);
         }, this, 2, 1, 0);
         attackButton = game.add.button(unitMenux, unitMenuy+50, 'attack_button', function(){
-            this.unitMenuMoveClick(unit);
+            this.unitMenuAttackClick(unit);
         }, this, 2, 1, 0);
 
         //determine what buttons to grey out
@@ -63,7 +63,10 @@ var menu = function (game) {
         unit.inMenu = false;
     };
     this.unitMenuAttackClick = function(unit){
-        //attackaction
+        this.menutargeter.destroy();
+        unitMenuGroup.destroy();
+        unit.inMenu = false;
+        battle.showAttackPanels(unit);
     };
     this.unitMenuWaitClick = function(unit){
         this.menutargeter.destroy() ;
@@ -75,6 +78,7 @@ var menu = function (game) {
 
     this.destroyUnitMenu = function(unit){
         this.menutargeter.destroy() ;
+        unitMenuGroup.destroy();
         unit.inMenu = false;
         lock = false;
     }

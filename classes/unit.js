@@ -292,6 +292,7 @@ var unit = function (game){
        //update the status of this unit, if HP is 0 it is dead
         if (this.hp <=0 ) {
             this.spriteframe.destroy();
+            grid[this.x/50][this.y/50] = undefined;
         }
     };
 

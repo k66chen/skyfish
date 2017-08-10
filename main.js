@@ -10,6 +10,7 @@ var battle;
 
 //since there can only be one movepanel at a time, decare it here
 var movepanel;
+var attackpanel;
 
 //global lock
 var lock = false;
@@ -58,7 +59,7 @@ var gameState = function (game){
         game.load.image('plat','assets/kan.png');
         game.load.image('goblin','assets/gob.png');
         game.load.image('trans','assets/transparent_tile.png');
-        game.load.image('enemy','assets/enemy_tile.png');
+        game.load.image('attack','assets/enemy_tile.png');
         game.load.image('menutargeter','assets/target.png');
         game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
         game.load.spritesheet('wait_button', 'assets/unit_wait_button.png', 100, 50);
