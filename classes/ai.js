@@ -74,14 +74,19 @@ var enemyAI = function (unit){
         var attackdir;
         if (checkGridExists(x/50 +1,y/50) && grid[x/50+1][y/50].isAlly){
             attackdir = 'e';
+            temppoints += 500;
         }else if (checkGridExists(x/50-1,y/50) && grid[x/50-1][y/50].isAlly){
            attackdir = 'w';
+            temppoints += 500;
         }else if (checkGridExists(x/50,y/50 + 1) && grid[x/50][y/50+1].isAlly){
             attackdir = 'n';
+            temppoints += 500;
         }else if (checkGridExists(x/50,y/50 - 1) && grid[x/50][y/50 -1].isAlly){
             attackdir = 's';
+            temppoints += 500;
         }else{
             attackdir = 'x';
+            temppoints += 5;
         }
 
 

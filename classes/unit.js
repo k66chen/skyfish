@@ -296,8 +296,18 @@ var unit = function (game){
     this.updateStatus = function(){
        //update the status of this unit, if HP is 0 it is dead
         if (this.hp <=0 ) {
+            //we need to destroy this from our enemies/allies array too
+            if (this.isEnemy){
+
+            }else{
+                var index = allies.indexOf (this);
+                console.log ("wew: " + index);
+                allies.splice (index, 1);
+            }
             this.spriteframe.destroy();
             grid[this.x/50][this.y/50] = undefined;
+            console.log (allies);
+            console.log(enemies);
         }
     };
 
