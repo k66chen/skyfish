@@ -24,7 +24,6 @@ var enemyAI = function (unit){
     };
 
     this.movePathFind = function (x,y,tempmv,dir,moveArray, temppoints){
-        console.log (tempmv);
         if (tempmv > 0){
             //check that this grid is not itself
             if (unit.x == x && unit.y == y){
@@ -71,10 +70,8 @@ var enemyAI = function (unit){
 
     this.attackAction = function (x,y, temppoints){
         //try attacking in all directions at this x and y
-        console.log ('calculating value for:' + this.tempgrid[x/50][y/50]);
         temppoints += calculateNearestAlly(x,y); // add the movement points
         var attackdir;
-        console.log (x/50 + " " + y/50)
         if (checkGridExists(x/50 +1,y/50) && grid[x/50+1][y/50].isAlly){
             attackdir = 'e';
         }else if (checkGridExists(x/50-1,y/50) && grid[x/50-1][y/50].isAlly){
@@ -92,8 +89,6 @@ var enemyAI = function (unit){
             points = temppoints ;
             MoveActions = this.tempgrid [x/50][y/50];
             AttackActions = attackdir;
-            console.log ('points: ' + temppoints);
-            console.log ('move: ' + MoveActions);
         }
 
     };
@@ -102,7 +97,6 @@ var enemyAI = function (unit){
         //executes the actions in movearray
         lock = true;
 
-        console.log ("Executing:" + MoveActions);
         this.moveTween(MoveActions);
 
     };
@@ -110,7 +104,6 @@ var enemyAI = function (unit){
 
     this.moveTween = function (moveArray){
 
-        console.log ("doing: " + moveArray + " with points: " + points);
         var units = 0;
         var initialDir = moveArray[0];
         var tweenChain = new Array ();
@@ -162,7 +155,6 @@ var enemyAI = function (unit){
             }
         }
         tweenChain.slice(-1)[0].onComplete.add(function (){
-            console.log ("x");
             //update the global grid to reflect our move
             delete grid[unit.x/50][unit.y/50];
 
@@ -170,6 +162,8 @@ var enemyAI = function (unit){
             unit.y =  unit.spriteframe.y;
 
             grid[unit.x/50][unit.y/50] = unit;
+
+            lock = false;
 
             if (AttackActions == 'e'){
                 battle.normalAttack(unit,grid[unit.x/50 + 1][unit.y/50], this.count);
@@ -183,8 +177,8 @@ var enemyAI = function (unit){
                 enemyTriggerAi(this.count +=1);
             }
 
+            //enemyTriggerAi(this.count +=1);
             unit.setTurnOver();
-            lock = false;
         },this);
         //trigger next ai
         tweenChain[0].start();
@@ -203,7 +197,6 @@ var enemyAI = function (unit){
                 }
             }
         }
-        console.log ("distance calculate: " + nearest + " points: " + 100/nearest);
         return 100/nearest;
     }
 

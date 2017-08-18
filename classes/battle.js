@@ -42,6 +42,11 @@ var battle = function (game){
         atktweenback = game.add.tween(attacker.spriteframe).to({x:attacker.x,y:attacker.y},200);
 
         atktween.chain(atktweenback);
+        atktweenback.onComplete.add(function (){
+            if (count !== undefined){
+                enemyTriggerAi(count +=1);
+            }
+        },this);
         atktween.start();
 
 
@@ -54,10 +59,8 @@ var battle = function (game){
 
         texttween.onComplete.add(function (){
             battletext.destroy();
-            if (count !== undefined){
-                enemyTriggerAi(count +=1);
-            }
         },this);
+
         texttween.start();
     };
 };
