@@ -22,8 +22,11 @@ var menu;
 //ally and enemy arrays determine the turn pacing
 var allies = [];
 var enemies = [];
+var enemeyAi = [];
 
-var check = true;
+
+var allyTurn = false;
+var enemyTurn = false;
 var turn = 0;
 
 window.onload = function (){
@@ -33,6 +36,7 @@ window.onload = function (){
 
     game.state.start("Game",true,false);
 }
+
 function checkGrid (x,y){
     //check if these x and y are out of bounds
     if (x < 0 || x > 9 || y < 0 || y > 15){
@@ -48,6 +52,77 @@ function checkGrid (x,y){
         //console.log(grid[x][y].getType());
     }
 }
+function checkGridExists (x,y){
+    //check if these x and y are out of bounds
+    if (x < 0 || x > 9 || y < 0 || y > 15){
+        return false;
+    }
+    //console.log (x + "," + y);
+
+    if (grid[x][y] !== undefined){
+        //console.log(grid[x][y].getType());
+        return true;
+    }else{
+
+        //console.log(grid[x][y].getType());
+    }
+}
+
+function debugPrintGrid (){
+    document.write('===================') ;
+    document.write('\n');
+    for (var i = 0;i < 10; i++){
+        document.write('\n');
+        for (var j = 0; j < 16; j++){
+            if (grid[i][j] === undefined){
+                document.write ('X')
+            }else{
+                document.write('O')
+            }
+        }
+    }
+    console.log (grid);
+}
+
+checkEnemyTurnOver = function (){
+    for (var i =0;i<enemies.length;i++){
+        if (enemies[i].hasTurn){
+            return;
+        }
+    }
+    enemyTurn = false;
+    allyTurn = true;
+    turn+=1;
+    console.log("turn" + turn);
+    for (var i =0;i<allies.length;i++){
+        allies[i].refreshTurn();
+    }
+};
+
+
+enemyTriggerAi = function (count){
+    console.log ("triggering ai count: " + count)
+    if (count < enemeyAi.length) {
+        enemeyAi[count].aiMovement(count);
+    }
+}
+checkAllyTurnOver = function (){
+    for (var i =0;i<allies.length;i++){
+        if (allies[i].hasTurn){
+            return;
+        }
+    }
+
+    enemyTurn = true;
+    allyTurn = false;
+
+    turn+=1;
+
+    for (var i =0;i<enemies.length;i++){
+        enemies[i].refreshTurn();
+    }
+    enemyTriggerAi(0);
+};
 var gameState = function (game){
 
     this.preload = function (){
@@ -65,6 +140,8 @@ var gameState = function (game){
         game.load.spritesheet('wait_button', 'assets/unit_wait_button.png', 100, 50);
         game.load.spritesheet('move_button', 'assets/unit_move_button.png', 100, 50);
         game.load.spritesheet('attack_button', 'assets/unit_attack_button.png', 100, 50);
+
+        game.load.bitmapFont('nokia','assets/fonts/nokia.png','assets/fonts/nokia.xml')
     }
 
 
@@ -118,50 +195,38 @@ var gameState = function (game){
         var enemy2 = new unit(game);
         var enemy3 = new unit(game);
         //unit object (HP,sp,MOVE,x,y,enemy?)
-        player.create('Platinum','plat',50,50,8,8,12,0);
-        player2.create('Platinum','plat',50,50,8,3,12,0);
+        player.create('Platinum','plat',50,50,8,1,1,0);
+        player2.create('Platinum','plat',50,50,8,2,2,0);
         enemy.create('Gobli1','goblin',50,50,2,1,3,1);
-        enemy2.create('Goblin2','goblin',50,50,1,2,5,1);
+        enemy2.create('Goblin2','goblin',50,50,3,2,5,1);
         enemy3.create('Goblin3','goblin',50,50,2,2,3,1);
 
-        ai = new enemyAI(enemy);
 
-        enemy.setTurnOver();
-        enemy2.setTurnOver();
-        enemy3.setTurnOver();
+
         enemies.push(enemy);
         enemies.push(enemy2);
         enemies.push(enemy3);
         allies.push(player);
         allies.push(player2);
-    }
+
+        ai = new enemyAI(enemy);
+        ai2 = new enemyAI(enemy2);
+        ai3 = new enemyAI(enemy3);
+
+
+        enemeyAi.push (ai);
+        enemeyAi.push (ai2);
+        enemeyAi.push (ai3);
+
+    };
 
     this.update = function(){
-        for (var i =0;i<allies.length;i++){
-            if (allies[i].hasTurn){
-                check = false;
-                break;
-            }
-        }
-        for (var i =0;i<enemies.length;i++){
-            if (enemies[i].hasTurn){
-                break;
-            }
-        }
-        if (check){
-            turn+=1;
-            console.log("turn" + turn);
-            for (var i =0;i<allies.length;i++){
-                allies[i].refreshTurn();
-            }
-            for (var i =0;i<enemies.length;i++){
-                enemies[i].refreshTurn();
-            }
-        }
-        check = true;
-    }
+
+    };
+
+
 
     this.render = function (){
-    }
+    };
 
 }

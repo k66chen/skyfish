@@ -24,8 +24,10 @@ var unit = function (game){
     //turn control variables
     // turn is over after 1 move and 1 attack action, or on 'wait' action
     this.moved = false;
+    this.attacked = false;
 
     this.isEnemy = false;
+    this.isAlly = true;
 
     this.getType = function (){
         return "unit";
@@ -44,6 +46,7 @@ var unit = function (game){
         this.y = y*50;
         if (enemy == 1){
             this.isEnemy = true;
+            this.isAlly = false;
         }
         //draw the enemy tile under
 
@@ -62,7 +65,7 @@ var unit = function (game){
             this.spriteframe.events.onInputDown.add(this.enemyClick, this);
             this.spriteframe.tint = 0xff644f;
         }
-
+        this.spriteframe.body.moves = false;
         //update global grid object
         grid[x][y] = this;
     };
@@ -273,7 +276,9 @@ var unit = function (game){
             this.tempmovepanel.destroy();
             this.updateGrid ();
             lock = false;
+            this.moved = true;
             menu.drawUnitMenu (this);
+            //move action is done
         },this);
 
         tweenChain[0].start();
@@ -297,16 +302,21 @@ var unit = function (game){
     };
 
     this.setTurnOver = function (){
+        this.hasTurn = false;
         if (this.isEnemy){
             this.spriteframe.tint = 0x702e2e;
+            checkEnemyTurnOver();
         }else{
             this.spriteframe.tint = 0x777777;
+            checkAllyTurnOver();
         }
-        this.hasTurn = false;
+
     };
 
     this.refreshTurn = function (){
         this.hasTurn = true;
+        this.attacked = false;
+        this.moved = false;
         if (this.isEnemy){
             this.spriteframe.tint = 0xff644f;
         }else {

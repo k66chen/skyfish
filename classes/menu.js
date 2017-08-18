@@ -32,9 +32,15 @@ var menu = function (game) {
         moveButton = game.add.button(unitMenux, unitMenuy, 'move_button', function(){
             this.unitMenuMoveClick(unit);
         }, this, 2, 1, 0);
+        if (unit.moved){
+            moveButton.tint = 0x777777;
+        }
         attackButton = game.add.button(unitMenux, unitMenuy+50, 'attack_button', function(){
             this.unitMenuAttackClick(unit);
         }, this, 2, 1, 0);
+        if (unit.attacked){
+            attackButton.tint = 0x777777;
+        }
 
         //determine what buttons to grey out
 
@@ -57,16 +63,20 @@ var menu = function (game) {
     };
 
     this.unitMenuMoveClick = function(unit){
-        this.menutargeter.destroy();
-        unitMenuGroup.destroy();
-        unit.moveAction();
-        unit.inMenu = false;
+        if (!unit.moved) {
+            this.menutargeter.destroy();
+            unitMenuGroup.destroy();
+            unit.moveAction();
+            unit.inMenu = false;
+        }
     };
     this.unitMenuAttackClick = function(unit){
-        this.menutargeter.destroy();
-        unitMenuGroup.destroy();
-        unit.inMenu = false;
-        battle.showAttackPanels(unit);
+        if (!unit.attacked) {
+            this.menutargeter.destroy();
+            unitMenuGroup.destroy();
+            unit.inMenu = false;
+            battle.showAttackPanels(unit);
+        }
     };
     this.unitMenuWaitClick = function(unit){
         this.menutargeter.destroy() ;
