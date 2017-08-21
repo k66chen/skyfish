@@ -298,14 +298,18 @@ var unit = function (game){
         if (this.hp <=0 ) {
             //we need to destroy this from our enemies/allies array too
             if (this.isEnemy){
-
+                //delete both the ai and the enemy
+                var index = enemies.indexOf (this);
+                enemies.splice (index, 1);
+                enemeyAi.splice (index,1);
             }else{
                 var index = allies.indexOf (this);
                 console.log ("wew: " + index);
                 allies.splice (index, 1);
             }
             this.spriteframe.destroy();
-            grid[this.x/50][this.y/50] = undefined;
+            delete grid[this.x/50][this.y/50];
+
             console.log (allies);
             console.log(enemies);
         }

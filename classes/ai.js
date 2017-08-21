@@ -5,22 +5,41 @@ var enemyAI = function (unit){
     //points decide whether this action is actually good
     var points = 0;
 
+    var movepanel;
+
     this.count;
     this.tempgrid = new Array (10);
     for (var i =0; i< 10;i++){
         this.tempgrid[i] = new Array (16);
     }
 
+
+    this.reinitiate = function () {
+        MoveActions = new Array ();
+        AttackActions = new Array ();
+        //points decide whether this action is actually good
+        points = 0;
+
+        this.tempgrid = new Array (10);
+        for (var i =0; i< 10;i++){
+            this.tempgrid[i] = new Array (16);
+        }
+    };
+
     this.action = function (){
 
     };
 
     this.aiMovement = function (count){
-        this.count = count;
-        //a dummy movepathfinder to check each move (don't draw the panels)
-        this.movePathFind(unit.x,unit.y,unit.movement, 'x',  new Array(), 0);
-
-        this.enemyAction();
+        if (unit.spriteframe !== undefined) {
+            this.count = count;
+            //a dummy movepathfinder to check each move (don't draw the panels)
+            movepanel = game.add.group();
+            this.movePathFind(unit.x, unit.y, unit.movement, 'x', new Array(), 0);
+            movepanel.setAll ('alpha',0.3);
+            movepanel.tint = 0xff644f;
+            this.enemyAction();
+        }
     };
 
     this.movePathFind = function (x,y,tempmv,dir,moveArray, temppoints){
@@ -28,11 +47,10 @@ var enemyAI = function (unit){
             //check that this grid is not itself
             if (unit.x == x && unit.y == y){
                 //check up,left,right,down = skip pushing to the movearray here
-                this.movePathFind(x+50,y,tempmv,'e',moveArray, temppoints);
-                this.movePathFind(x-50,y,tempmv,'w',moveArray, temppoints);
-                this.movePathFind(x,y-50,tempmv,'s',moveArray, temppoints);
-                this.movePathFind(x,y+50,tempmv,'n',moveArray, temppoints);
-
+                this.movePathFind(x + 50, y, tempmv, 'e', moveArray, temppoints);
+                this.movePathFind(x - 50, y, tempmv, 'w', moveArray, temppoints);
+                this.movePathFind(x, y - 50, tempmv, 's', moveArray, temppoints);
+                this.movePathFind(x, y + 50, tempmv, 'n', moveArray, temppoints);
             }
             else if ((checkGrid(x/50,y/50))){
                 //this panel is empty, add move panel here
@@ -43,6 +61,7 @@ var enemyAI = function (unit){
                 }
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
+                    movepanel.create (x,y,'trans');
                     this.tempgrid[x/50][y/50] = moveArrayCopy;
                     this.attackAction(x,y,temppoints);
                 }else{
@@ -160,15 +179,19 @@ var enemyAI = function (unit){
             }
         }
         tweenChain.slice(-1)[0].onComplete.add(function (){
+            console.log (MoveActions);
+            console.log (AttackActions);
             //update the global grid to reflect our move
             delete grid[unit.x/50][unit.y/50];
 
             unit.x =  unit.spriteframe.x;
             unit.y =  unit.spriteframe.y;
 
+
             grid[unit.x/50][unit.y/50] = unit;
 
             lock = false;
+
 
             if (AttackActions == 'e'){
                 battle.normalAttack(unit,grid[unit.x/50 + 1][unit.y/50], this.count);
@@ -182,10 +205,14 @@ var enemyAI = function (unit){
                 enemyTriggerAi(this.count +=1);
             }
 
+
+            this.reinitiate();
+
+            movepanel.destroy();
             //enemyTriggerAi(this.count +=1);
             unit.setTurnOver();
+            //debugPrintGrid();
         },this);
-        //trigger next ai
         tweenChain[0].start();
     };
 

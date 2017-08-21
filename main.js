@@ -48,7 +48,7 @@ function checkGrid (x,y){
         //console.log(grid[x][y].getType());
         return true;
     }else{
-
+        return false;
         //console.log(grid[x][y].getType());
     }
 }
@@ -71,10 +71,10 @@ function checkGridExists (x,y){
 function debugPrintGrid (){
     document.write('===================') ;
     document.write('\n');
-    for (var i = 0;i < 10; i++){
+    for (var i = 0;i < 16; i++){
         document.write('\n');
-        for (var j = 0; j < 16; j++){
-            if (grid[i][j] === undefined){
+        for (var j = 0; j < 10; j++){
+            if (grid[j][i] === undefined){
                 document.write ('X')
             }else{
                 document.write('O')

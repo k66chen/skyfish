@@ -26,14 +26,16 @@ var battle = function (game){
         lock = false;
     };
     this.normalAttack = function (attacker, defender, count){
-        //attacker and defender are both unit objects
-        var damage = attacker.atk - defender.def;
-        this.battleAnimation (attacker, defender, 30, count);
-        defender.hp -=30;
-        //alert(defender.hp);
-        console.log(defender.hp);
-        defender.updateStatus();
-        attacker.attacked = true;
+        if (attacker !== undefined && defender !== undefined) {
+            //attacker and defender are both unit objects
+            var damage = attacker.atk - defender.def;
+            defender.updateStatus();
+            this.battleAnimation(attacker, defender, 30, count);
+            defender.hp -= 30;
+            //alert(defender.hp);
+            defender.updateStatus();
+            attacker.attacked = true;
+        }
     };
 
     this.battleAnimation = function (attacker, defender, damage, count){
