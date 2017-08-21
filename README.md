@@ -13,12 +13,16 @@ Made with Phaser, assets are placeholder for now will self-draw later
 ~~Implement pathfinding algorithm (alike fire emblem)~~
     -save path so movement feels realistic
 
-Add menu when unit is clicked (Attack (Skill), move, wait)
-    -Add combat flow between units
+~~Add menu when unit is clicked (Attack (Skill), move, wait)~~
+
+' ~~-Add combat flow between units~~
+    
+-make combat more interesting (Add skills, attack ranges, etc)
 
 Add terrian class for maps
 
+~~Add turn based game flow~~
 
-Add turn based game flow
-    -get code from VM
+~~-get code from VM~~
+
 

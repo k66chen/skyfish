@@ -29,9 +29,10 @@ var battle = function (game){
         if (attacker !== undefined && defender !== undefined) {
             //attacker and defender are both unit objects
             var damage = attacker.atk - defender.def;
+            if (damage < 0){ damage = 0};
             defender.updateStatus();
-            this.battleAnimation(attacker, defender, 30, count);
-            defender.hp -= 30;
+            this.battleAnimation(attacker, defender, damage, count);
+            defender.hp -= damage;
             //alert(defender.hp);
             defender.updateStatus();
             attacker.attacked = true;
@@ -51,13 +52,12 @@ var battle = function (game){
         },this);
         atktween.start();
 
-
-        var battletext = game.add.text (defender.x, defender.y, '-' + damage, {
+        var battletext = game.add.text(defender.x + 5, defender.y, '-' + damage, {
             font: "30px Impact",
-            fill: "#ec0003"
+            fill: "#f43403"
         });
 
-        texttween = game.add.tween(battletext).to({x:defender.x,y:defender.y + 30},400);
+        texttween = game.add.tween(battletext).to({x:defender.x+5,y:defender.y + 30},400);
 
         texttween.onComplete.add(function (){
             battletext.destroy();

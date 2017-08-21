@@ -126,7 +126,7 @@ checkAllyTurnOver = function (){
 var gameState = function (game){
 
     this.preload = function (){
-        game.load.image('sky','assets/grass.png');
+        game.load.image('grass','assets/grass.png');
         game.load.image ("lbot",'assets/box_small.png');
         game.load.image('block','assets/block.png');
         game.load.image('ball','assets/sprites/balls.png');
@@ -160,8 +160,11 @@ var gameState = function (game){
         game.physics.startSystem(Phaser.Physics.BOX2D);
         game.stage.backgroundColor = '#2d2d2d';
 
-        game.add.sprite (0,0,'sky');
+        game.add.sprite(0,0,'grass');
 
+
+
+        //***********************************ADD STAGE*****************
         //ledges
         game.add.sprite(0,600,'lbot');
         game.add.sprite(50,600,'lbot');
@@ -195,11 +198,11 @@ var gameState = function (game){
         var enemy2 = new unit(game);
         var enemy3 = new unit(game);
         //unit object (HP,sp,MOVE,x,y,enemy?)
-        player.create('Platinum','plat',50,50,8,1,1,0);
-        player2.create('Platinum','plat',50,50,8,2,2,0);
-        enemy.create('Gobli1','goblin',50,50,2,1,3,1);
-        enemy2.create('Goblin2','goblin',50,50,3,2,5,1);
-        enemy3.create('Goblin3','goblin',50,50,2,2,3,1);
+        player.create('Platinum','plat',50,50,8,1,1,0, 30, 15);
+        player2.create('Platinum','plat',50,50,8,2,2,0, 25, 5);
+        enemy.create('Gobli1','goblin',50,50,2,1,3,1, 15, 5);
+        enemy2.create('Goblin2','goblin',50,50,3,2,5,1, 12, 5);
+        enemy3.create('Goblin3','goblin',50,50,2,2,3,1, 12, 5);
 
 
 
@@ -217,7 +220,7 @@ var gameState = function (game){
         enemeyAi.push (ai);
         enemeyAi.push (ai2);
         enemeyAi.push (ai3);
-
+        //*****END*********************************************************************
     };
 
     this.update = function(){

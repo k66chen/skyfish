@@ -6,6 +6,10 @@ var unit = function (game){
     this.sp;
     this.movement;
 
+    //battle stats
+    this.atk;
+    this.def;
+
     //x and y coordinates in the grid (multiplied by 50) 10x16
     this.x;
     this.y;
@@ -35,12 +39,15 @@ var unit = function (game){
 
     //disables movement controls for this unit, turn on AI
 
-    this.create = function (name,sprite, hp, sp, movement,x,y, enemy){
+    this.create = function (name,sprite, hp, sp, movement,x,y, enemy, atk, def){
         //constructor for a generic unit sprite
         this.name = name;
         this.hp = hp;
         this.sp = sp;
         this.movement = movement;
+
+        this.atk = atk;
+        this.def = def;
 
         this.x = x*50;
         this.y = y*50;
