@@ -57,7 +57,10 @@ var unit = function (game){
         }
         //draw the enemy tile under
 
-        this.spriteframe = game.add.sprite (this.x,this.y,sprite);
+        //this.spriteframe = game.add.sprite (this.x,this.y,sprite);
+        this.spriteframe = game.add.isoSprite(this.x, this.y, 25, sprite, 0);
+        this.spriteframe.anchor.set (0.5,0);
+
         game.physics.arcade.enable (this.spriteframe);
         //this.spriteframe.body.gravity.y = 300;
         //this.spriteframe.collideWorldBounds = true;
@@ -95,7 +98,7 @@ var unit = function (game){
         this.moveArray = new Array();
         this.movePathFind (this.x,this.y,this.movement,'x',new Array());
         movepanel.setAll ('inputEnabled',true);
-        movepanel.setAll ('alpha',0.3);
+        //movepanel.setAll ('alpha',0.3);
         movepanel.callAll ('events.onInputDown.add','events.onInputDown',this.move,this);
 
     };
@@ -148,7 +151,12 @@ var unit = function (game){
                 }
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
-                    movepanel.create (x,y,'trans');
+                    //movepanel.create (x,y,'trans');
+                    panel = game.add.isoSprite(x, y, 0, 'tile', 0, movepanel);
+                    panel.anchor.set(0.5, 0);
+                    panel.alpha = 0.4;
+                    panel.tint = 0x9bc1ff;
+                    //panel.anchor.set(0.5, 0);
                     //save how we got to this panel onto the tempgrid
                     this.tempgrid[x/50][y/50] = moveArrayCopy;
                 }else{
@@ -188,22 +196,39 @@ var unit = function (game){
         //   this.spriteframe.body.velocity.x= 150;
         this.infoswitch = false;
         //destroy the old element in grid
-        //determine destination x and destination y
-        var destx = event.x /50;
-        var desty = event.y /50;
+        //determine destination x and destination y (in iso), convert
+        var destx = event.x;
+        var desty = event.y;
         //var testtext = game.add.text (0,0,"x:"+this.spriteframe.x+"dx:"+destx);
-        console.log (this.tempgrid[destx][desty])
-        var pathMoveArray = this.tempgrid[destx][desty];
-
+        console.log (destx + ' ' + desty);
+        game.iso.unproject(game.input.activePointer.position, cursorPos);
+        //var pathMoveArray = this.tempgrid[destx][desty];
+        isoGroup.forEach(function (tile) {
+            var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
+            console.log (inBounds);
+            // If it does, do a little animation and tint change.
+            if (!tile.selected && inBounds) {
+                tile.selected = true;
+                selectedTile = tile;
+                tile.tint = 0x86bfda;
+                // game.add.tween(tile).to({ isoZ: 4 }, 200, Phaser.Easing.Quadratic.InOut, true);
+            }
+            // If not, revert back to how it was.
+            else if (tile.selected && !inBounds) {
+                tile.selected = false;
+                tile.tint = 0xffffff;
+                // game.add.tween(tile).to({ isoZ: 0 }, 200, Phaser.Easing.Quadratic.InOut, true);
+            }
+        });
         //game.physics.arcade.moveToXY (this.spriteframe,event.x,this.spriteframe.y,50,500); 
-        this.spriteframe.body.moves = false;
+        //this.spriteframe.body.moves = false;
 
-        this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
-        this.tempmovepanel.alpha = 0.5;
+        //this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
+        //this.tempmovepanel.alpha = 0.5;
 
         this.movedone = false;
 
-        this.moveTween(pathMoveArray);
+        this.moveTween(selectedTile);
         //do x tween then y tween
         /*movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
         //x tween complete, add y tween
@@ -222,9 +247,41 @@ var unit = function (game){
 
     };
 
+
+
+    this.moveTween = function (selectedTile){
+        var tile = selectedTile
+        //console.log("tile", selectedTile)
+        var isoBaseSize = 32;
+        var tween = game.add.tween(this.spriteframe)
+            .to(
+                { isoZ: 60, isoX: (tile.isoX), isoY: (tile.isoY) },
+                200,
+                Phaser.Easing.Quadratic.InOut,
+                false
+            ,250)
+        var tween2 = game.add.tween(this.spriteframe).to(
+            { isoZ: 25 },
+            350,
+            Phaser.Easing.Bounce.Out,
+            false
+        );
+
+        tween2.onComplete.add(function (){
+            this.movedone = true;
+            //this.updateGrid ();
+            lock = false;
+            this.moved = true;
+            menu.drawUnitMenu (this);
+            //move action is done
+        },this);
+
+        tween.chain(tween2);
+        tween.start()
+    };
     //takes the movement array and moves accordingly
     //saves movetweens and chains them depending on the direction
-    this.moveTween = function (moveArray){
+/*    this.moveTween = function (moveArray){
         var units = 0;
         var initialDir = moveArray[0];
         var tweenChain = new Array ();
@@ -289,7 +346,7 @@ var unit = function (game){
         },this);
 
         tweenChain[0].start();
-    };
+    };*/
 
     this.updateGrid = function(){
         //update the global grid to reflect our move
@@ -297,7 +354,6 @@ var unit = function (game){
         this.x = this.spriteframe.x;
         this.y = this.spriteframe.y;
         grid[this.x/50][this.y/50] = this;
-
     };
 
     this.updateStatus = function(){

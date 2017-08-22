@@ -20,11 +20,14 @@ var menu = function (game) {
         unitMenuy = unit.y;
 
         //draw targeting reticle on this unit
-        this.menutargeter = game.add.sprite (unit.x,unit.y,'menutargeter');
+        this.menutargeter = game.add.sprite (unit.spriteframe.x-25,unit.spriteframe.y,'menutargeter');
 
         this.determineMenuLocation(unit);
 
         unitMenuGroup = game.add.group();
+
+        unitMenux = unit.spriteframe.x+30;
+        unitMenuy = unit.spriteframe.y;
 
         waitButton = game.add.button(unitMenux, unitMenuy+100, 'wait_button', function(){
             this.unitMenuWaitClick(unit);
@@ -64,6 +67,7 @@ var menu = function (game) {
 
     this.unitMenuMoveClick = function(unit){
         if (!unit.moved) {
+            lock = false;
             this.menutargeter.destroy();
             unitMenuGroup.destroy();
             unit.moveAction();

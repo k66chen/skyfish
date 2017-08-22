@@ -90,22 +90,33 @@ var enemyAI = function (unit){
 
     };
 
+
+    this.calculateAttackPoints =function (ally){
+            var attackpoints = 0;
+            if ((unit.atk - ally.def) > ally.hp){
+                attackpoints += 99999;
+            }else{
+                attackpoints += (unit.atk - ally.def)*100;
+            }
+            return attackpoints;
+    };
+
     this.attackAction = function (x,y, temppoints){
         //try attacking in all directions at this x and y
         temppoints += calculateNearestAlly(x,y); // add the movement points
         var attackdir;
         if (checkGridExists(x/50 +1,y/50) && grid[x/50+1][y/50].isAlly){
+            temppoints += this.calculateAttackPoints(grid[x/50+1][y/50]);
             attackdir = 'e';
-            temppoints += 500;
         }else if (checkGridExists(x/50-1,y/50) && grid[x/50-1][y/50].isAlly){
-           attackdir = 'w';
-            temppoints += 500;
+            temppoints += this.calculateAttackPoints(grid[x/50-1][y/50]);
+            attackdir = 'w';
         }else if (checkGridExists(x/50,y/50 + 1) && grid[x/50][y/50+1].isAlly){
+            temppoints += this.calculateAttackPoints(grid[x/50+1][y/50+1]);
             attackdir = 'n';
-            temppoints += 500;
         }else if (checkGridExists(x/50,y/50 - 1) && grid[x/50][y/50 -1].isAlly){
+            temppoints += this.calculateAttackPoints(grid[x/50][y/50-1]);
             attackdir = 's';
-            temppoints += 500;
         }else{
             attackdir = 'x';
             temppoints += 5;

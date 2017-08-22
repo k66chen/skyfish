@@ -1,9 +1,18 @@
 //creates canvas and calls the various game states
+var game = new Phaser.Game(1000, 1000, Phaser.AUTO, 'phaser-canvas', null, true, false);
+
+var BasicGame = function (game) { };
+
+BasicGame.Boot = function (game) { };
+
+var isoGroup, cursorPos, cursor;
+
 //
 //
 //
 var global = "scope test";
 var grid = []; //this is the 2d array that holds all the map data! (10x16)
+
 
 //our battle class handles interactions between units
 var battle;
@@ -29,14 +38,6 @@ var allyTurn = false;
 var enemyTurn = false;
 var turn = 0;
 
-window.onload = function (){
-    game = new Phaser.Game (500,800,Phaser.CANVAS,'gameContainer');
-
-    game.state.add ("Game", gameState); 
-
-    game.state.start("Game",true,false);
-}
-
 function checkGrid (x,y){
     //check if these x and y are out of bounds
     if (x < 0 || x > 9 || y < 0 || y > 15){
@@ -52,6 +53,7 @@ function checkGrid (x,y){
         //console.log(grid[x][y].getType());
     }
 }
+
 function checkGridExists (x,y){
     //check if these x and y are out of bounds
     if (x < 0 || x > 9 || y < 0 || y > 15){
@@ -126,6 +128,11 @@ checkAllyTurnOver = function (){
 var gameState = function (game){
 
     this.preload = function (){
+        game.plugins.add(new Phaser.Plugin.Isometric(game));
+        cursorPos = new Phaser.Plugin.Isometric.Point3();
+        game.iso.anchor.setTo (0.5,0.2);
+
+
         game.load.image('grass','assets/grass.png');
         game.load.image ("lbot",'assets/box_small.png');
         game.load.image('block','assets/block.png');
@@ -140,7 +147,7 @@ var gameState = function (game){
         game.load.spritesheet('wait_button', 'assets/unit_wait_button.png', 100, 50);
         game.load.spritesheet('move_button', 'assets/unit_move_button.png', 100, 50);
         game.load.spritesheet('attack_button', 'assets/unit_attack_button.png', 100, 50);
-
+        game.load.image('tile', 'assets/tile.png');
         game.load.bitmapFont('nokia','assets/fonts/nokia.png','assets/fonts/nokia.xml')
     }
 
@@ -160,13 +167,15 @@ var gameState = function (game){
         game.physics.startSystem(Phaser.Physics.BOX2D);
         game.stage.backgroundColor = '#2d2d2d';
 
-        game.add.sprite(0,0,'grass');
+        //game.add.sprite(0,0,'grass');
 
 
+        isoGroup = game.add.group();
+        this.spawnTiles();
 
         //***********************************ADD STAGE*****************
         //ledges
-        game.add.sprite(0,600,'lbot');
+      /*  game.add.sprite(0,600,'lbot');
         game.add.sprite(50,600,'lbot');
         game.add.sprite(100,600,'lbot');
         game.add.sprite(400,450,'lbot');
@@ -189,7 +198,7 @@ var gameState = function (game){
         grid[2][12] = block;
         grid[9][9] = block;
         grid[8][9] = block;
-        grid[7][9] = block;
+        grid[7][9] = block;*/
 
 
         var player = new unit(game);
@@ -221,15 +230,37 @@ var gameState = function (game){
         enemeyAi.push (ai2);
         enemeyAi.push (ai3);
         //*****END*********************************************************************
+        // Create a group for our tiles.
+
+        // Let's make a load of tiles on a grid.
+
     };
 
     this.update = function(){
 
     };
 
-
+    this.spawnTiles = function () {
+        var tile;
+        for (var xx = 0; xx < 500; xx += 50) {
+            for (var yy = 0; yy < 800; yy += 50) {
+                // Create a tile using the new game.add.isoSprite factory method at the specified position.
+                // The last parameter is the group you want to add it to (just like game.add.sprite)
+                tile = game.add.isoSprite(xx, yy, 0, 'tile', 0, isoGroup);
+                tile.anchor.set(0.5, 0);
+            }
+        }
+        //block = game.add.isoSprite(190, 228, -10, 'plat', 0, isoGroup);
+        //block.anchor.set (0.5,0);
+        //block.tint = 0x702e2e;
+        //block.alpha = 0.5;
+    };
 
     this.render = function (){
     };
 
-}
+};
+
+
+game.state.add ("Game", gameState);
+game.state.start("Game",true,false);

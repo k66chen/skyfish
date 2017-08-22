@@ -54,7 +54,7 @@ var battle = function (game){
 
         var battletext = game.add.text(defender.x + 5, defender.y, '-' + damage, {
             font: "30px Impact",
-            fill: "#f43403"
+            fill: "#fbfffd"
         });
 
         texttween = game.add.tween(battletext).to({x:defender.x+5,y:defender.y + 30},400);
