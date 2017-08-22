@@ -58,7 +58,7 @@ var unit = function (game){
         //draw the enemy tile under
 
         //this.spriteframe = game.add.sprite (this.x,this.y,sprite);
-        this.spriteframe = game.add.isoSprite(this.x, this.y, 25, sprite, 0);
+        this.spriteframe = game.add.isoSprite(this.x/50 * 38, this.y/50 * 38, 25, sprite, 0);
         this.spriteframe.anchor.set (0.5,0);
 
         game.physics.arcade.enable (this.spriteframe);
@@ -111,6 +111,8 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
+        console.log (this.x + ' ' + this.y);
+        console.log (this.spriteframe.x + ' ' + this.spriteframe.y);
         if (this.movedone && this.hasTurn && !this.inMenu && !lock){
             if (!this.infoswitch){
                 this.showMenu();
@@ -152,9 +154,9 @@ var unit = function (game){
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
                     //movepanel.create (x,y,'trans');
-                    panel = game.add.isoSprite(x, y, 0, 'tile', 0, movepanel);
+                    panel = game.add.isoSprite(x/50 * 38, y/50 * 38, 3, 'tile', 0, movepanel);
                     panel.anchor.set(0.5, 0);
-                    panel.alpha = 0.4;
+                    panel.alpha = 0.3;
                     panel.tint = 0x9bc1ff;
                     //panel.anchor.set(0.5, 0);
                     //save how we got to this panel onto the tempgrid
@@ -272,6 +274,7 @@ var unit = function (game){
             //this.updateGrid ();
             lock = false;
             this.moved = true;
+            this.updateGrid();
             menu.drawUnitMenu (this);
             //move action is done
         },this);
@@ -351,9 +354,15 @@ var unit = function (game){
     this.updateGrid = function(){
         //update the global grid to reflect our move
         delete grid[this.x/50][this.y/50];
-        this.x = this.spriteframe.x;
-        this.y = this.spriteframe.y;
-        grid[this.x/50][this.y/50] = this;
+        //this.x = this.spriteframe.x;
+        //this.y = this.spriteframe.y;
+
+        doofx = (2* this.spriteframe.y + this.spriteframe.x) /2;
+        doofy = (2* this.spriteframe.y - this.spriteframe.x) /2;
+
+
+        console.log ('converted:' + doofx + ' ' + doofy);
+        //grid[this.x/50][this.y/50] = this;
     };
 
     this.updateStatus = function(){
@@ -387,7 +396,6 @@ var unit = function (game){
             this.spriteframe.tint = 0x777777;
             checkAllyTurnOver();
         }
-
     };
 
     this.refreshTurn = function (){

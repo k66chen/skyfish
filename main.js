@@ -1,5 +1,5 @@
 //creates canvas and calls the various game states
-var game = new Phaser.Game(1000, 1000, Phaser.AUTO, 'phaser-canvas', null, true, false);
+var game = new Phaser.Game(1200, 1000, Phaser.AUTO, 'phaser-canvas', null, true, false);
 
 var BasicGame = function (game) { };
 
@@ -242,14 +242,21 @@ var gameState = function (game){
 
     this.spawnTiles = function () {
         var tile;
-        for (var xx = 0; xx < 500; xx += 50) {
-            for (var yy = 0; yy < 800; yy += 50) {
+        for (var i = 0; i < 10; i += 1) {
+            for (var j = 0; j < 16; j += 1) {
                 // Create a tile using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
-                tile = game.add.isoSprite(xx, yy, 0, 'tile', 0, isoGroup);
+                x = i * 38;
+                y = j * 38;
+
+                isoX = x - y;
+                isoY = (x + y)/2;
+                //tile = game.add.sprite (isoX, isoY, 'tile', isoGroup);
+                tile = game.add.isoSprite(x, y, 0, 'tile', 0, isoGroup);
                 tile.anchor.set(0.5, 0);
             }
         }
+
         //block = game.add.isoSprite(190, 228, -10, 'plat', 0, isoGroup);
         //block.anchor.set (0.5,0);
         //block.tint = 0x702e2e;
