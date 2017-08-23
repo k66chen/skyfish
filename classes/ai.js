@@ -1,6 +1,8 @@
 var enemyAI = function (unit){
     //class for controlling enemy ai
     var MoveActions = new Array ();
+    var MoveToX;
+    var MoveToY;
     var AttackActions = new Array ();
     //points decide whether this action is actually good
     var points = 0;
@@ -37,7 +39,6 @@ var enemyAI = function (unit){
             //a dummy movepathfinder to check each move (don't draw the panels)
             movepanel = game.add.group();
             this.movePathFind(unit.x, unit.y, unit.movement, 'x', new Array(), 0);
-            movepanel.setAll ('alpha',0.25);
             this.enemyAction();
         }
     };
@@ -64,7 +65,10 @@ var enemyAI = function (unit){
                 }
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
-                    movepanel.create (x,y,'attack');
+                    panel = game.add.isoSprite(x/50 * 38, y/50 * 38, 3, 'tile', 0, movepanel);
+                    panel.anchor.set(0.5, 0);
+                    panel.alpha = 0.3;
+                    panel.tint = 0xe8694c;
                     this.tempgrid[x/50][y/50] = moveArrayCopy;
                     this.attackAction(x,y,temppoints);
                 }else{
@@ -126,6 +130,8 @@ var enemyAI = function (unit){
         if (temppoints >= points){
             points = temppoints ;
             MoveActions = this.tempgrid [x/50][y/50];
+            MoveToX = x/50;
+            MoveToY = y/50;
             AttackActions = attackdir;
         }
 
@@ -135,12 +141,82 @@ var enemyAI = function (unit){
         //executes the actions in movearray
         lock = true;
 
-        this.moveTween(MoveActions);
+        isoGroup.forEach(function (tile) {
+
+            var inBounds = (tile.isoX/38 == MoveToX && tile.isoY/38 == MoveToY);
+            //var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
+            // If it does, do a little animation and tint change.
+            if (!tile.selected && inBounds) {
+                tile.selected = true;
+                selectedTile = tile;
+                tile.tint = 0x86bfda;
+            }
+            // If not, revert back to how it was.
+            else if (tile.selected && !inBounds) {
+                tile.selected = false;
+                tile.tint = 0xffffff;
+            }
+        });
+        this.moveTween(selectedTile);
 
     };
 
+    this.moveTween = function (selectedTile){
+        var tile = selectedTile
+        var isoBaseSize = 32;
 
-    this.moveTween = function (moveArray){
+        var tween = game.add.tween(unit.spriteframe)
+            .to(
+                { isoZ: 60, isoX: (tile.isoX), isoY: (tile.isoY) },
+                200,
+                Phaser.Easing.Quadratic.InOut,
+                false
+                ,250)
+        var tween2 = game.add.tween(unit.spriteframe).to(
+            { isoZ: 25 },
+            350,
+            Phaser.Easing.Bounce.Out,
+            false
+        );
+
+        tween2.onComplete.add(function (){
+            //update the global grid to reflect our move
+            delete grid[unit.x/50][unit.y/50];
+
+            unit.x =  selectedTile.isoX/38*50;
+            unit.y =  selectedTile.isoY/38*50;
+
+            grid[unit.x/50][unit.y/50] = unit;
+
+            lock = false;
+
+
+            if (AttackActions == 'e'){
+                battle.normalAttack(unit,grid[unit.x/50 + 1][unit.y/50], this.count);
+            }else if (AttackActions == 'w'){
+                battle.normalAttack(unit,grid[unit.x/50 - 1][unit.y/50], this.count);
+            }else if (AttackActions == 'n'){
+                battle.normalAttack(unit,grid[unit.x/50][unit.y/50 + 1], this.count);
+            }else if (AttackActions == 's'){
+                battle.normalAttack(unit,grid[unit.x/50][unit.y/50 - 1], this.count);
+            }else{
+                enemyTriggerAi(this.count +=1);
+            }
+
+
+            this.reinitiate();
+
+            movepanel.destroy();
+            //enemyTriggerAi(this.count +=1);
+            unit.setTurnOver();
+            //debugPrintGrid();
+        },this);
+
+        tween.chain(tween2);
+        tween.start()
+    };
+
+   /* this.moveTween = function (moveArray){
 
         var units = 0;
         var initialDir = moveArray[0];
@@ -233,13 +309,7 @@ var enemyAI = function (unit){
         tweenChain[0].start();
 
         //case no move
-        if (initialDir == 'x'){
-            console.log ("NOMVATK");
-            movepanel.destroy();
-            //unit.setTurnOver();
-            //enemyTriggerAi(this.count +=1);
-        }
-    };
+    };*/
 
 
     calculateNearestAlly = function (x,y){

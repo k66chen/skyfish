@@ -61,6 +61,10 @@ var unit = function (game){
         this.spriteframe = game.add.isoSprite(this.x/50 * 38, this.y/50 * 38, 25, sprite, 0);
         this.spriteframe.anchor.set (0.5,0);
 
+        unitSpriteGroup.add (this.spriteframe);
+
+        isoGroup.add(this.spriteframe);
+
         game.physics.arcade.enable (this.spriteframe);
         //this.spriteframe.body.gravity.y = 300;
         //this.spriteframe.collideWorldBounds = true;
@@ -193,7 +197,6 @@ var unit = function (game){
 
     this.move = function (event){
         //move the player depending on which movepanel was picked (panel in mouse event)
-        event.alpha = 0.5;
         //game.add.text (0,0,"x:"+event.x+"y:"+event.y);
         //   this.spriteframe.body.velocity.x= 150;
         this.infoswitch = false;
@@ -202,10 +205,13 @@ var unit = function (game){
         var destx = event.x;
         var desty = event.y;
         //var testtext = game.add.text (0,0,"x:"+this.spriteframe.x+"dx:"+destx);
-        console.log (destx + ' ' + desty);
+        console.log ('event pos: ' + destx + ' ' + desty);
+
         game.iso.unproject(game.input.activePointer.position, cursorPos);
+
+        console.log ('cursor pos: ' + cursorPos.x + ' ' + cursorPos.y);
         //var pathMoveArray = this.tempgrid[destx][desty];
-        isoGroup.forEach(function (tile) {
+        movepanel.forEach(function (tile) {
             var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
             console.log (inBounds);
             // If it does, do a little animation and tint change.
@@ -213,40 +219,27 @@ var unit = function (game){
                 tile.selected = true;
                 selectedTile = tile;
                 tile.tint = 0x86bfda;
-                // game.add.tween(tile).to({ isoZ: 4 }, 200, Phaser.Easing.Quadratic.InOut, true);
             }
             // If not, revert back to how it was.
             else if (tile.selected && !inBounds) {
                 tile.selected = false;
                 tile.tint = 0xffffff;
-                // game.add.tween(tile).to({ isoZ: 0 }, 200, Phaser.Easing.Quadratic.InOut, true);
             }
         });
-        //game.physics.arcade.moveToXY (this.spriteframe,event.x,this.spriteframe.y,50,500); 
-        //this.spriteframe.body.moves = false;
 
-        //this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
-        //this.tempmovepanel.alpha = 0.5;
+        if (selectedTile !== undefined && checkGrid(selectedTile.isoX/38,selectedTile.isoY/38)) {
+            movepanel.destroy();
 
-        this.movedone = false;
+            console.log ("grid: " + grid[selectedTile.isoX/38][selectedTile.isoY/38]);
+            //this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
+            //this.tempmovepanel.alpha = 0.5;
 
-        this.moveTween(selectedTile);
-        //do x tween then y tween
-        /*movetween = game.add.tween(this.spriteframe).to({x:event.x,y:event.y},600);
-        //x tween complete, add y tween
+            this.movedone = false;
 
-        movetween.onComplete.add(function (){
-            this.movedone = true;
-            this.tempmovepanel.destroy();
-            this.updateGrid ();
-        },this);
-        movetween.start();*/
-        //movetweeny = game.add.tween(this.spriteframe).to({x:this.spriteframe.x,y:event.y},600);
-        //movetweeny.start();
-
-        movepanel.destroy();
+            this.moveTween(selectedTile);
 
 
+        }
     };
 
 
@@ -274,7 +267,7 @@ var unit = function (game){
             //this.updateGrid ();
             lock = false;
             this.moved = true;
-            this.updateGrid();
+            this.updateGrid(selectedTile);
             menu.drawUnitMenu (this);
             //move action is done
         },this);
@@ -351,18 +344,21 @@ var unit = function (game){
         tweenChain[0].start();
     };*/
 
-    this.updateGrid = function(){
+    this.updateGrid = function(tile){
         //update the global grid to reflect our move
         delete grid[this.x/50][this.y/50];
-        //this.x = this.spriteframe.x;
-        //this.y = this.spriteframe.y;
 
-        doofx = (2* this.spriteframe.y + this.spriteframe.x) /2;
-        doofy = (2* this.spriteframe.y - this.spriteframe.x) /2;
+        this.x = tile.isoX/38*50;
+        this.y = tile.isoY/38*50;
 
+        console.log ('converted old:' + tile.isoX/38 + ' ' + tile.isoY/38);
+        console.log ('new x: ' + this.x + 'new y: ' + this.y);
 
-        console.log ('converted:' + doofx + ' ' + doofy);
-        //grid[this.x/50][this.y/50] = this;
+        grid[this.x/50][this.y/50] = this;
+
+        tile.selected = false;
+        tile.tint = 0xffffff;
+        game.iso.simpleSort(unitSpriteGroup);
     };
 
     this.updateStatus = function(){

@@ -7,6 +7,8 @@ BasicGame.Boot = function (game) { };
 
 var isoGroup, cursorPos, cursor;
 
+var unitSpriteGroup;
+
 //
 //
 //
@@ -171,6 +173,7 @@ var gameState = function (game){
 
 
         isoGroup = game.add.group();
+        unitSpriteGroup = game.add.group();
         this.spawnTiles();
 
         //***********************************ADD STAGE*****************
@@ -256,6 +259,8 @@ var gameState = function (game){
                 tile.anchor.set(0.5, 0);
             }
         }
+
+        game.iso.simpleSort(isoGroup);
 
         //block = game.add.isoSprite(190, 228, -10, 'plat', 0, isoGroup);
         //block.anchor.set (0.5,0);
