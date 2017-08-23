@@ -205,7 +205,7 @@ var unit = function (game){
         //var testtext = game.add.text (0,0,"x:"+this.spriteframe.x+"dx:"+destx);
         console.log ('event pos: ' + destx + ' ' + desty);
 
-        game.iso.unproject(game.input.activePointer.position, cursorPos);
+        //game.iso.unproject(game.input.activePointer.position, cursorPos);
 
         console.log ('cursor pos: ' + cursorPos.x + ' ' + cursorPos.y);
         //var pathMoveArray = this.tempgrid[destx][desty];
@@ -213,16 +213,11 @@ var unit = function (game){
             var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
             console.log (inBounds);
             // If it does, do a little animation and tint change.
-            if (!tile.selected && inBounds) {
-                tile.selected = true;
+            if (inBounds) {
                 selectedTile = tile;
                 tile.tint = 0x86bfda;
             }
             // If not, revert back to how it was.
-            else if (tile.selected && !inBounds) {
-                tile.selected = false;
-                tile.tint = 0xffffff;
-            }
         });
 
         if (selectedTile !== undefined && checkGrid(selectedTile.isoX/tileWidth,selectedTile.isoY/tileWidth)) {

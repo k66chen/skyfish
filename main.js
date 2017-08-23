@@ -240,7 +240,24 @@ var gameState = function (game){
     };
 
     this.update = function(){
-
+        game.iso.unproject(game.input.activePointer.position, cursorPos);
+        if (movepanel !== undefined){
+            movepanel.forEach(function (tile) {
+                var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
+                // If it does, do a little animation and tint change.
+                if (!tile.selected && inBounds) {
+                    tile.selected = true;
+                    tile.tint = 0x2e4b7a;
+                    //game.add.tween(tile).to({ isoZ: 4 }, 200, Phaser.Easing.Quadratic.InOut, true);
+                }
+                // If not, revert back to how it was.
+                else if (tile.selected && !inBounds) {
+                    tile.selected = false;
+                    tile.tint = 0x9bc1ff;
+                    //game.add.tween(tile).to({ isoZ: 0 }, 200, Phaser.Easing.Quadratic.InOut, true);
+                }
+            });
+        }
     };
 
     this.spawnTiles = function () {
