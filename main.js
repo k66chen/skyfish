@@ -5,10 +5,10 @@ var BasicGame = function (game) { };
 
 BasicGame.Boot = function (game) { };
 
-var isoGroup, cursorPos, cursor;
+var isoGroup, cursorPos, cursor, unitSpriteGroup;
 
-var unitSpriteGroup;
 
+var tileWidth = 38;
 //
 //
 //
@@ -174,6 +174,7 @@ var gameState = function (game){
 
         isoGroup = game.add.group();
         unitSpriteGroup = game.add.group();
+
         this.spawnTiles();
 
         //***********************************ADD STAGE*****************
@@ -202,7 +203,6 @@ var gameState = function (game){
         grid[9][9] = block;
         grid[8][9] = block;
         grid[7][9] = block;*/
-
 
         var player = new unit(game);
         var player2 = new unit(game);

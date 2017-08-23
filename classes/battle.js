@@ -3,23 +3,59 @@ var battle = function (game){
     this.showAttackPanels = function(unit){
 
         //assume range is 1 for now
+        attackpanel = undefined;
         attackpanel = game.add.group();
 
-        attackpanel.create (unit.x+50,unit.y,'attack');
+/*        attackpanel.create (unit.x+50,unit.y,'attack');
         attackpanel.create (unit.x-50,unit.y,'attack');
         attackpanel.create (unit.x,unit.y+50,'attack');
-        attackpanel.create (unit.x,unit.y-50,'attack');
+        attackpanel.create (unit.x,unit.y-50,'attack');*/
 
-        attackpanel.alpha = 0.4;
+        panel = game.add.isoSprite(unit.x/50 * tileWidth + tileWidth, unit.y/50 * tileWidth, 3, 'tile', 0, attackpanel);
+        panel.anchor.set(0.5, 0);
+        panel.alpha = 0.3;
+        panel.tint = 0xffaabe;
+
+        panel = game.add.isoSprite(unit.x/50 * tileWidth - tileWidth, unit.y/50 * tileWidth, 3, 'tile', 0, attackpanel);
+        panel.anchor.set(0.5, 0);
+        panel.alpha = 0.3;
+        panel.tint = 0xffaabe;
+
+        panel = game.add.isoSprite(unit.x/50 * tileWidth, unit.y/50 * tileWidth + tileWidth, 3, 'tile', 0, attackpanel);
+        panel.anchor.set(0.5, 0);
+        panel.alpha = 0.3;
+        panel.tint = 0xffaabe;
+
+        panel = game.add.isoSprite(unit.x/50 * tileWidth, unit.y/50 * tileWidth - tileWidth, 3, 'tile', 0, attackpanel);
+        panel.anchor.set(0.5, 0);
+        panel.alpha = 0.3;
+        panel.tint = 0xffaabe;
+
         attackpanel.setAll ('inputEnabled',true);
         attackpanel.callAll ('events.onInputDown.add','events.onInputDown',function (event){this.attackPanelClick(event,unit)},this);
     };
 
     this.attackPanelClick = function (event,unit){
+        game.iso.unproject(game.input.activePointer.position, cursorPos);
+        attackpanel.forEach(function (tile) {
+            var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
+            // If it does, do a little animation and tint change.
+            if (!tile.selected && inBounds) {
+                tile.selected = true;
+                selectedTile = tile;
+            }
+            // If not, revert back to how it was.
+            else if (tile.selected && !inBounds) {
+                tile.selected = false;
+            }
+        });
 
-        if (!checkGrid(event.x/50,event.y/50 )){
-            if (grid[event.x/50][event.y/50].isEnemy){
-                this.normalAttack(unit,grid[event.x/50][event.y/50]);
+        event.x = selectedTile.isoX;
+        event.y = selectedTile.isoY;
+
+        if (!checkGrid(event.x/tileWidth,event.y/tileWidth)){
+            if (grid[event.x/tileWidth][event.y/tileWidth].isEnemy){
+                this.normalAttack(unit,grid[event.x/tileWidth][event.y/tileWidth]);
                 attackpanel.destroy();
             }
         }
@@ -66,11 +102,11 @@ var battle = function (game){
         atktween.chain(atktweenback);
 
         atktween.onComplete.add(function (){
-            var battletext = game.add.text(defender.spriteframe.x + 5, defender.spriteframe.y, '-' + damage, {
+            var battletext = game.add.text(defender.spriteframe.x, defender.spriteframe.y, '-' + damage, {
                 font: "30px Impact",
                 fill: "#ff3400"
             });
-            texttween = game.add.tween(battletext).to({x:defender.spriteframe.x+5,y:defender.spriteframe.y + 30},400);
+            texttween = game.add.tween(battletext).to({x:defender.spriteframe.x,y:defender.spriteframe.y + 30},400,Phaser.Easing.Quadratic.InOut, false);
             texttween.onComplete.add(function (){
                 battletext.destroy();
             },this);

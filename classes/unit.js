@@ -58,12 +58,12 @@ var unit = function (game){
         //draw the enemy tile under
 
         //this.spriteframe = game.add.sprite (this.x,this.y,sprite);
-        this.spriteframe = game.add.isoSprite(this.x/50 * 38, this.y/50 * 38, 25, sprite, 0);
+        this.spriteframe = game.add.isoSprite(this.x/50 * tileWidth, this.y/50 * tileWidth, 25, sprite, 0);
         this.spriteframe.anchor.set (0.5,0);
 
-        unitSpriteGroup.add (this.spriteframe);
 
         isoGroup.add(this.spriteframe);
+        unitSpriteGroup.add(this.spriteframe);
 
         game.physics.arcade.enable (this.spriteframe);
         //this.spriteframe.body.gravity.y = 300;
@@ -115,8 +115,6 @@ var unit = function (game){
     };
     this.click = function (){
         //on click any unit
-        console.log (this.x + ' ' + this.y);
-        console.log (this.spriteframe.x + ' ' + this.spriteframe.y);
         if (this.movedone && this.hasTurn && !this.inMenu && !lock){
             if (!this.infoswitch){
                 this.showMenu();
@@ -158,7 +156,7 @@ var unit = function (game){
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
                     //movepanel.create (x,y,'trans');
-                    panel = game.add.isoSprite(x/50 * 38, y/50 * 38, 3, 'tile', 0, movepanel);
+                    panel = game.add.isoSprite(x/50 * tileWidth, y/50 * tileWidth, 3, 'tile', 0, movepanel);
                     panel.anchor.set(0.5, 0);
                     panel.alpha = 0.3;
                     panel.tint = 0x9bc1ff;
@@ -227,10 +225,10 @@ var unit = function (game){
             }
         });
 
-        if (selectedTile !== undefined && checkGrid(selectedTile.isoX/38,selectedTile.isoY/38)) {
+        if (selectedTile !== undefined && checkGrid(selectedTile.isoX/tileWidth,selectedTile.isoY/tileWidth)) {
             movepanel.destroy();
 
-            console.log ("grid: " + grid[selectedTile.isoX/38][selectedTile.isoY/38]);
+            console.log ("grid: " + grid[selectedTile.isoX/tileWidth][selectedTile.isoY/tileWidth]);
             //this.tempmovepanel = game.add.sprite (event.x,event.y,'trans');
             //this.tempmovepanel.alpha = 0.5;
 
@@ -348,10 +346,10 @@ var unit = function (game){
         //update the global grid to reflect our move
         delete grid[this.x/50][this.y/50];
 
-        this.x = tile.isoX/38*50;
-        this.y = tile.isoY/38*50;
+        this.x = tile.isoX/tileWidth*50;
+        this.y = tile.isoY/tileWidth*50;
 
-        console.log ('converted old:' + tile.isoX/38 + ' ' + tile.isoY/38);
+        console.log ('converted old:' + tile.isoX/tileWidth + ' ' + tile.isoY/tileWidth);
         console.log ('new x: ' + this.x + 'new y: ' + this.y);
 
         grid[this.x/50][this.y/50] = this;

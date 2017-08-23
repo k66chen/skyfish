@@ -65,7 +65,7 @@ var enemyAI = function (unit){
                 }
                 moveArrayCopy.push(dir);
                 if (this.tempgrid[x/50][y/50] == undefined){
-                    panel = game.add.isoSprite(x/50 * 38, y/50 * 38, 3, 'tile', 0, movepanel);
+                    panel = game.add.isoSprite(x/50 * tileWidth, y/50 * tileWidth, 3, 'tile', 0, movepanel);
                     panel.anchor.set(0.5, 0);
                     panel.alpha = 0.3;
                     panel.tint = 0xe8694c;
@@ -143,7 +143,7 @@ var enemyAI = function (unit){
 
         isoGroup.forEach(function (tile) {
 
-            var inBounds = (tile.isoX/38 == MoveToX && tile.isoY/38 == MoveToY);
+            var inBounds = (tile.isoX/tileWidth == MoveToX && tile.isoY/tileWidth == MoveToY);
             //var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
             // If it does, do a little animation and tint change.
             if (!tile.selected && inBounds) {
@@ -183,13 +183,14 @@ var enemyAI = function (unit){
             //update the global grid to reflect our move
             delete grid[unit.x/50][unit.y/50];
 
-            unit.x =  selectedTile.isoX/38*50;
-            unit.y =  selectedTile.isoY/38*50;
+            unit.x =  selectedTile.isoX/tileWidth*50;
+            unit.y =  selectedTile.isoY/tileWidth*50;
 
             grid[unit.x/50][unit.y/50] = unit;
 
             lock = false;
-
+            selectedTile.selected = false;
+            selectedTile.tint = 0xffffff;
 
             if (AttackActions == 'e'){
                 battle.normalAttack(unit,grid[unit.x/50 + 1][unit.y/50], this.count);
