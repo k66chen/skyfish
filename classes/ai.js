@@ -116,7 +116,7 @@ var enemyAI = function (unit){
             temppoints += this.calculateAttackPoints(grid[x/50-1][y/50]);
             attackdir = 'w';
         }else if (checkGridExists(x/50,y/50 + 1) && grid[x/50][y/50+1].isAlly){
-            temppoints += this.calculateAttackPoints(grid[x/50+1][y/50+1]);
+            temppoints += this.calculateAttackPoints(grid[x/50][y/50+1]);
             attackdir = 'n';
         }else if (checkGridExists(x/50,y/50 - 1) && grid[x/50][y/50 -1].isAlly){
             temppoints += this.calculateAttackPoints(grid[x/50][y/50-1]);

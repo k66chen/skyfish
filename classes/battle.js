@@ -40,29 +40,48 @@ var battle = function (game){
     };
 
     this.battleAnimation = function (attacker, defender, damage, count){
+        console.log ('mm?');
         //tween halfway towards the defending unit
-        atktween = game.add.tween(attacker.spriteframe).to({x:defender.x,y:defender.y},150);
-        atktweenback = game.add.tween(attacker.spriteframe).to({x:attacker.x,y:attacker.y},200);
+
+        oldX = attacker.spriteframe.isoX;
+        oldY = attacker.spriteframe.isoY;
+
+        atktween = game.add.tween(attacker.spriteframe)
+            .to(
+                { isoZ: attacker.spriteframe.isoZ, isoX: (defender.spriteframe.isoX), isoY: (defender.spriteframe.isoY) },
+                120,
+                Phaser.Easing.Quadratic.InOut,
+                false
+        ,250);
+
+        atktweenback = game.add.tween(attacker.spriteframe)
+            .to(
+                { isoZ: attacker.spriteframe.isoZ, isoX: (oldX), isoY: (oldY) },
+                120,
+                Phaser.Easing.Quadratic.InOut,
+                false
+            );
+
 
         atktween.chain(atktweenback);
+
+        atktween.onComplete.add(function (){
+            var battletext = game.add.text(defender.spriteframe.x + 5, defender.spriteframe.y, '-' + damage, {
+                font: "30px Impact",
+                fill: "#ff3400"
+            });
+            texttween = game.add.tween(battletext).to({x:defender.spriteframe.x+5,y:defender.spriteframe.y + 30},400);
+            texttween.onComplete.add(function (){
+                battletext.destroy();
+            },this);
+            texttween.start();
+        },this);
         atktweenback.onComplete.add(function (){
+
             if (count !== undefined){
                 enemyTriggerAi(count +=1);
             }
         },this);
         atktween.start();
-
-        var battletext = game.add.text(defender.x + 5, defender.y, '-' + damage, {
-            font: "30px Impact",
-            fill: "#fbfffd"
-        });
-
-        texttween = game.add.tween(battletext).to({x:defender.x+5,y:defender.y + 30},400);
-
-        texttween.onComplete.add(function (){
-            battletext.destroy();
-        },this);
-
-        texttween.start();
     };
 };
