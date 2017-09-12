@@ -1,7 +1,7 @@
 var battle = function (game){
 
-    this.showAttackPanels = function(unit){
-
+    this.showAttackPanels = function(unit, custom){
+        console.log (custom);
         //assume range is 1 for now
         attackpanel = undefined;
         attackpanel = game.add.group();
@@ -32,10 +32,11 @@ var battle = function (game){
         panel.tint = 0xffaabe;
 
         attackpanel.setAll ('inputEnabled',true);
-        attackpanel.callAll ('events.onInputDown.add','events.onInputDown',function (event){this.attackPanelClick(event,unit)},this);
+        attackpanel.callAll ('events.onInputDown.add','events.onInputDown',function (event){this.attackPanelClick(event,unit,custom)},this);
     };
 
-    this.attackPanelClick = function (event,unit){
+    this.attackPanelClick = function (event,unit,custom){
+        //custom is a custom attack function that you can fork in from skills
         game.iso.unproject(game.input.activePointer.position, cursorPos);
         attackpanel.forEach(function (tile) {
             var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
@@ -55,7 +56,12 @@ var battle = function (game){
 
         if (!checkGrid(event.x/tileWidth,event.y/tileWidth)){
             if (grid[event.x/tileWidth][event.y/tileWidth].isEnemy){
-                this.normalAttack(unit,grid[event.x/tileWidth][event.y/tileWidth]);
+                console.log (custom);
+                if (custom === undefined) {
+                    this.normalAttack(unit, grid[event.x / tileWidth][event.y / tileWidth]);
+                }else{
+                    custom(unit, grid[event.x / tileWidth][event.y / tileWidth]);
+                }
                 attackpanel.destroy();
             }
         }
@@ -75,8 +81,17 @@ var battle = function (game){
         }
     };
 
+    //=============================== S K I L L S ==========================================================
+
+
+
+
+
+
+
+
+    //===================== END SKILLS ======================================================================
     this.battleAnimation = function (attacker, defender, damage, count){
-        console.log ('mm?');
         //tween halfway towards the defending unit
 
         oldX = attacker.spriteframe.isoX;

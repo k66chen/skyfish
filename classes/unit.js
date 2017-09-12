@@ -1,6 +1,10 @@
 //handles syntax for a generic unit on the field
 var unit = function (game){
     this.spriteframe;
+    this.hpBar;
+    this.spBar;
+
+
     this.name;
     this.hp;
     this.sp;
@@ -33,8 +37,19 @@ var unit = function (game){
     this.isEnemy = false;
     this.isAlly = true;
 
+
+
+    //contains this unit's skills
+    this.skillList = new Array();
+
     this.getType = function (){
         return "unit";
+    };
+
+    this.dumpSkillNames = function (){
+        for (var i = 0; i< this.skillList.length;i++){
+           console.log (this.skillList[i].name);
+        }
     };
 
     //disables movement controls for this unit, turn on AI
@@ -43,7 +58,9 @@ var unit = function (game){
         //constructor for a generic unit sprite
         this.name = name;
         this.hp = hp;
+        this.maxhp = hp;
         this.sp = sp;
+        this.maxsp = sp;
         this.movement = movement;
 
         this.atk = atk;

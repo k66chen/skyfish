@@ -19,6 +19,8 @@ var grid = []; //this is the 2d array that holds all the map data! (10x16)
 //our battle class handles interactions between units
 var battle;
 
+var skill;
+
 //since there can only be one movepanel at a time, decare it here
 var movepanel;
 var attackpanel;
@@ -100,6 +102,8 @@ checkEnemyTurnOver = function (){
     console.log("turn" + turn);
     for (var i =0;i<allies.length;i++){
         allies[i].refreshTurn();
+        //also regenerate mana
+        allies[i].sp +=10;
     }
 };
 
@@ -135,7 +139,7 @@ var gameState = function (game){
         game.iso.anchor.setTo (0.5,0.2);
 
 
-        game.load.image('grass','assets/grass.png');
+        game.load.image('sky','assets/sky.png');
         game.load.image ("lbot",'assets/box_small.png');
         game.load.image('block','assets/block.png');
         game.load.image('ball','assets/sprites/balls.png');
@@ -150,6 +154,7 @@ var gameState = function (game){
         game.load.spritesheet('move_button', 'assets/unit_move_button.png', 100, 50);
         game.load.spritesheet('attack_button', 'assets/unit_attack_button.png', 100, 50);
         game.load.image('tile', 'assets/tile.png');
+        game.load.image('skill_icon', 'assets/skill_icon.png');
         game.load.bitmapFont('nokia','assets/fonts/nokia.png','assets/fonts/nokia.xml')
     }
 
@@ -164,12 +169,13 @@ var gameState = function (game){
 
         //create our battle object
         battle = new battle (game);
+        //skill = new skill (game);
 
         menu = new menu (game);
         game.physics.startSystem(Phaser.Physics.BOX2D);
         game.stage.backgroundColor = '#2d2d2d';
 
-        //game.add.sprite(0,0,'grass');
+        game.add.sprite(0,0,'sky');
 
 
         isoGroup = game.add.group();
@@ -206,6 +212,17 @@ var gameState = function (game){
 
         var player = new unit(game);
         var player2 = new unit(game);
+        //give the ally a skill
+        var bashSkill = new skill (game);
+        var bashSkill2 = new skill (game);
+        bashSkill.bash();
+        bashSkill2.recover();
+
+        player.skillList.push(bashSkill);
+        player.skillList.push(bashSkill2);
+
+        player.dumpSkillNames();
+
         var enemy = new unit(game);
         var enemy2 = new unit(game);
         var enemy3 = new unit(game);
